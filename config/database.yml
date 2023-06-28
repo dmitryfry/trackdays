@@ -82,5 +82,5 @@ test:
 production:
   <<: *default
   database: trackdays_production
-  username: trackdays
+  username: difry
   password: <%= ENV["TRACKDAYS_DATABASE_PASSWORD"] %>
