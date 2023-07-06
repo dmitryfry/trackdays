@@ -36,6 +36,7 @@
 
         <!-- mobile menu -->
         <button
+          id="mobile-menu-button"
           class="mr-4 inline-block text-gray-600 hover:text-custom-red sm:hidden"
         >
           <svg
@@ -53,6 +54,39 @@
             />
           </svg>
         </button>
+
+        <div
+          id="mobile-menu-overlay"
+          class="fixed inset-0 z-10 hidden bg-black/50"
+        ></div>
+
+        <div
+          id="mobile-menu"
+          class="fixed right-4 top-4 z-20 hidden w-56 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+        >
+          <div class="py-1">
+            <a
+              href="#news"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+              >Новости</a
+            >
+            <a
+              href="#agenda"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+              >Трек дни</a
+            >
+            <a
+              href="#info"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+              >Информация</a
+            >
+            <a
+              href="#contacts"
+              class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+              >Контакты</a
+            >
+          </div>
+        </div>
       </header>
 
       <!-- banner -->
