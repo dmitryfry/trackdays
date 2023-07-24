@@ -1,36 +1,28 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './app/helpers/**/*.rb',
-    './app/javascript/**/*.js',
+    './app/assets/stylesheets/**/*.css',
+    './app/assets/javascript/**/*.js',
     './app/views/**/*',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'custom-red': '#DA251C',
+      },
+      gridTemplateRows: {
+        layout: 'auto 1fr auto',
+      },
+    },
+    fontSize: {
+      sm: '0.8rem',
+      base: '1rem',
+      xl: '1.25rem',
+      '2xl': '1.5rem',
+      '3xl': '2rem',
+      '4xl': '2.441rem',
+      '5xl': '3.052rem',
+    },
   },
   plugins: [],
 }
-
-// const defaultTheme = require('tailwindcss/defaultTheme')
-//
-// module.exports = {
-//   content: [
-//     './public/*.html',
-//     './app/helpers/**/*.rb',
-//     './app/javascript/**/*.js',
-//     './app/views/**/*.{erb,haml,html,slim}'
-//   ],
-//   theme: {
-//     extend: {
-//       fontFamily: {
-//         sans: ['Inter var', ...defaultTheme.fontFamily.sans],
-//       },
-//     },
-//   },
-//   plugins: [
-//     require('@tailwindcss/forms'),
-//     require('@tailwindcss/aspect-ratio'),
-//     require('@tailwindcss/typography'),
-//     require('@tailwindcss/container-queries'),
-//   ]
-// }

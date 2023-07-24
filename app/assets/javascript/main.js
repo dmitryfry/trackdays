@@ -1,6 +1,10 @@
-import './styles.css'
-import { setupDom } from './dom'
-;(function () {
+;(function (ns) {
+  const { setupDom } = ns
+  if (!setupDom) {
+    console.error('setupDom not found')
+    return
+  }
+
   const main = () => {
     const mobileMenuButtonName = 'mobileMenuButton'
     const mobileMenuName = 'mobileMenu'
@@ -21,7 +25,10 @@ import { setupDom } from './dom'
     ]
 
     const dom = setupDom(selectors)
-    if (!dom) return
+    if (!dom) {
+      console.error("Some dom element isn't found")
+      return
+    }
 
     dom[mobileMenuButtonName].addEventListener('click', () => {
       dom[mobileMenuName].classList.toggle('hidden')
@@ -40,4 +47,4 @@ import { setupDom } from './dom'
   }
 
   window.addEventListener('load', main)
-})()
+})((window.mainPageNameSpace = window.mainPageNameSpace || {}))
