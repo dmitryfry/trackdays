@@ -22,3 +22,11 @@ Things you may want to cover:
 * Deployment instructions
 
 * ...
+
+## Steps to run the project
+
+1. Clone the repository
+2. Run `bundle install`
+3. Run `rails db:create`
+4. Run `rails db:migrate`
+5. Run `bin/dev`
