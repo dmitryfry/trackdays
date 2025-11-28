@@ -1,0 +1,87 @@
+<div>
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-white">Панель администратора</h1>
+    <button 
+      onclick="alert('В демо-режиме эта функция не сохраняет данные в базу.')"
+      class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition-colors"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Создать событие
+    </button>
+  </div>
+
+  <!-- Dashboard Stats -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+      <div class="text-slate-500 text-xs font-bold uppercase mb-1">Всего событий</div>
+      <div class="text-2xl font-white font-mono text-white"><%= @events.count %></div>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+      <div class="text-slate-500 text-xs font-bold uppercase mb-1">Активных пилотов</div>
+      <div class="text-2xl font-white font-mono text-white">142</div>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+      <div class="text-slate-500 text-xs font-bold uppercase mb-1">Выручка (Текущая)</div>
+      <div class="text-2xl font-white font-mono text-emerald-500">2.4M ₽</div>
+    </div>
+    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800">
+      <div class="text-slate-500 text-xs font-bold uppercase mb-1">Заполненность</div>
+      <div class="text-2xl font-white font-mono text-blue-500">
+        <%= @events.any? ? (@events.sum(&:slots_booked).to_f / @events.sum(&:slots_total) * 100).round(1) : 0 %>%
+      </div>
+    </div>
+  </div>
+
+  <!-- Events Table -->
+  <div class="bg-slate-900 rounded-xl border border-slate-800 overflow-hidden">
+    <div class="p-4 border-b border-slate-800 flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <h2 class="font-bold text-white">Список Трек-дней</h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left text-slate-300">
+        <thead class="text-xs text-slate-400 uppercase bg-slate-950/50">
+          <tr>
+            <th class="px-6 py-3">Дата</th>
+            <th class="px-6 py-3">Название</th>
+            <th class="px-6 py-3">Трасса</th>
+            <th class="px-6 py-3">Слоты</th>
+            <th class="px-6 py-3">Цена</th>
+            <th class="px-6 py-3 text-right">Действия</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800">
+          <% if @events.any? %>
+            <% @events.each do |event| %>
+              <tr class="hover:bg-slate-800/50">
+                <td class="px-6 py-4"><%= event.date.strftime('%Y-%m-%d') %></td>
+                <td class="px-6 py-4 font-medium text-white"><%= event.title %></td>
+                <td class="px-6 py-4"><%= event.track.name %></td>
+                <td class="px-6 py-4">
+                  <span class="<%= event.slots_booked >= event.slots_total ? 'text-red-500' : 'text-emerald-500' %>">
+                    <%= event.slots_booked %>/<%= event.slots_total %>
+                  </span>
+                </td>
+                <td class="px-6 py-4"><%= number_to_currency(event.price_rub, unit: '₽', format: '%n %u', delimiter: ' ') %></td>
+                <td class="px-6 py-4 text-right">
+                  <div class="flex justify-end gap-2">
+                    <button onclick="alert('Редактирование в разработке')" class="p-1 hover:text-blue-500 transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <button onclick="alert('Удаление в разработке')" class="p-1 hover:text-red-500 transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            <% end %>
+          <% else %>
+            <tr>
+              <td colspan="6" class="px-6 py-4 text-center text-slate-400">Нет событий</td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,19 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  track: one
+  date: 2025-11-28
+  title: MyString
+  slots_total: 1
+  slots_booked: 1
+  price_rub: 1
+  organizer: MyString
+
+two:
+  track: two
+  date: 2025-11-28
+  title: MyString
+  slots_total: 1
+  slots_booked: 1
+  price_rub: 1
+  organizer: MyString

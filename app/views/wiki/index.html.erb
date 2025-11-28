@@ -1,0 +1,143 @@
+<div class="max-w-4xl mx-auto">
+  <div class="text-center mb-12">
+    <h1 class="text-4xl font-bold text-white mb-4 flex items-center justify-center gap-3">
+      <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+      AI Гоночный Инженер
+    </h1>
+    <p class="text-slate-400 text-lg">
+      Задай вопрос нашему виртуальному тренеру на базе Gemini. 
+      Получи советы по технике пилотирования, настройке авто и безопасности.
+    </p>
+  </div>
+
+  <!-- Chat Interface -->
+  <div class="bg-slate-900 rounded-2xl border border-slate-800 shadow-2xl overflow-hidden mb-12">
+    <div class="p-6 md:p-8 space-y-6">
+      
+      <!-- Answer Area -->
+      <div id="answer-area" class="hidden bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+        <div class="flex items-start gap-4">
+          <div class="w-10 h-10 rounded-full bg-emerald-900/50 flex items-center justify-center shrink-0 border border-emerald-500/30">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+          </div>
+          <div class="prose prose-invert max-w-none">
+            <p id="answer-text" class="whitespace-pre-wrap leading-relaxed text-slate-200"></p>
+          </div>
+        </div>
+      </div>
+
+      <div id="loading-indicator" class="hidden flex justify-center py-8">
+        <svg class="animate-spin text-red-500" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>
+      </div>
+
+      <!-- Input Area -->
+      <%= form_with url: wiki_ask_path, method: :post, id: "wiki-form", class: "relative" do |f| %>
+        <%= f.text_field :question, 
+          id: "question-input",
+          placeholder: "Спроси, например: 'Что делать при сносе передней оси?'",
+          class: "w-full bg-slate-950 border border-slate-700 rounded-xl py-4 pl-6 pr-14 text-white placeholder-slate-500 focus:outline-none focus:border-red-600 focus:ring-1 focus:ring-red-600 transition-all shadow-inner"
+        %>
+        <button 
+          type="submit"
+          id="submit-button"
+          class="absolute right-2 top-2 bottom-2 bg-red-600 hover:bg-red-700 disabled:bg-slate-800 disabled:text-slate-600 text-white p-2 rounded-lg transition-colors"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      <% end %>
+
+      <!-- Suggestions -->
+      <div id="suggestions" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <% suggestions = [
+          "Как правильно проходить апекс?",
+          "Какое давление шин выбрать для трека?",
+          "Техника торможения Trail-braking",
+          "Как подготовить машину к первому трек-дню?"
+        ] %>
+        <% suggestions.each do |suggestion| %>
+          <button
+            type="button"
+            onclick="setQuestion('<%= suggestion %>')"
+            class="text-left p-3 rounded-lg border border-slate-800 hover:bg-slate-800 hover:border-slate-700 text-sm text-slate-400 hover:text-white transition-colors flex items-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+            <%= suggestion %>
+          </button>
+        <% end %>
+      </div>
+    </div>
+    
+    <div class="bg-slate-950 px-6 py-4 border-t border-slate-800 flex items-center gap-2 text-xs text-yellow-600/80">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+      AI может совершать ошибки. Всегда следуйте указаниям маршалов на трассе и здравому смыслу.
+    </div>
+  </div>
+
+  <!-- Static Wiki Categories -->
+  <h2 class="text-2xl font-bold text-white mb-6">База Знаний</h2>
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <% ['Флаги и сигналы', 'Подготовка авто', 'Траектории'].each do |cat| %>
+      <div class="bg-slate-900 p-6 rounded-xl border border-slate-800 hover:border-red-500/50 transition-colors cursor-pointer group">
+        <h3 class="font-bold text-lg text-white group-hover:text-red-500 transition-colors"><%= cat %></h3>
+        <p class="text-slate-500 text-sm mt-2">Читать раздел &rarr;</p>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+  function setQuestion(question) {
+    document.getElementById('question-input').value = question;
+  }
+
+  document.getElementById('wiki-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const question = document.getElementById('question-input').value.trim();
+    if (!question) return;
+
+    const answerArea = document.getElementById('answer-area');
+    const loadingIndicator = document.getElementById('loading-indicator');
+    const suggestions = document.getElementById('suggestions');
+    const submitButton = document.getElementById('submit-button');
+    const questionInput = document.getElementById('question-input');
+
+    // Show loading, hide answer and suggestions
+    answerArea.classList.add('hidden');
+    loadingIndicator.classList.remove('hidden');
+    suggestions.classList.add('hidden');
+    submitButton.disabled = true;
+    questionInput.disabled = true;
+
+    try {
+      const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+      const response = await fetch('<%= wiki_ask_path %>', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken,
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({ question: question }),
+        credentials: 'same-origin'
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        document.getElementById('answer-text').textContent = data.answer;
+        answerArea.classList.remove('hidden');
+      } else {
+        document.getElementById('answer-text').textContent = data.error || 'Произошла ошибка';
+        answerArea.classList.remove('hidden');
+      }
+    } catch (error) {
+      document.getElementById('answer-text').textContent = 'Ошибка связи с сервером';
+      answerArea.classList.remove('hidden');
+    } finally {
+      loadingIndicator.classList.add('hidden');
+      submitButton.disabled = false;
+      questionInput.disabled = false;
+    }
+  });
+</script>

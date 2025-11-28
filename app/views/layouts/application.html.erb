@@ -1,16 +1,155 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
   <head>
-    <title>Trackdays</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>TrackDays.ru - Amateur Motorsport</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
     <%= stylesheet_link_tag "tailwind", "inter-font", "data-turbo-track": "reload" %>
-
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <style>
+      /* Custom scrollbar for dark theme */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #0f172a; 
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #334155; 
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #475569; 
+      }
+    </style>
   </head>
 
-  <body>
-    <%= yield %>
+  <body class="bg-slate-950 text-slate-200 antialiased selection:bg-red-600 selection:text-white">
+    <div class="min-h-screen flex flex-col bg-slate-950 text-slate-200">
+      <!-- Navbar -->
+      <nav class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="flex items-center justify-between h-16">
+            <div class="flex items-center">
+              <%= link_to root_path, class: "flex items-center gap-2 group" do %>
+                <div class="w-8 h-8 bg-gradient-to-br from-red-600 to-red-800 rounded flex items-center justify-center transform group-hover:skew-x-[-10deg] transition-transform">
+                  <span class="font-bold text-white italic">T</span>
+                </div>
+                <span class="font-bold text-xl tracking-tight text-white group-hover:text-red-500 transition-colors">
+                  TrackDays<span class="text-red-600">.ru</span>
+                </span>
+              <% end %>
+            </div>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:block">
+              <div class="ml-10 flex items-baseline space-x-4">
+                <%= link_to root_path, class: "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors #{'bg-red-600/10 text-red-500' if request.path == root_path || 'text-slate-300 hover:text-white hover:bg-slate-800'}" do %>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+                  Главная
+                <% end %>
+                <%= link_to calendar_path, class: "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors #{'bg-red-600/10 text-red-500' if request.path == calendar_path || 'text-slate-300 hover:text-white hover:bg-slate-800'}" do %>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                  Календарь
+                <% end %>
+                <%= link_to tracks_path, class: "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors #{'bg-red-600/10 text-red-500' if request.path == tracks_path || 'text-slate-300 hover:text-white hover:bg-slate-800'}" do %>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  Автодромы
+                <% end %>
+                <%= link_to results_path, class: "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors #{'bg-red-600/10 text-red-500' if request.path == results_path || 'text-slate-300 hover:text-white hover:bg-slate-800'}" do %>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+                  Результаты
+                <% end %>
+                <%= link_to wiki_path, class: "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors #{'bg-red-600/10 text-red-500' if request.path == wiki_path || 'text-slate-300 hover:text-white hover:bg-slate-800'}" do %>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+                  AI Тренер
+                <% end %>
+                <%= link_to admin_path, class: "flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors #{'bg-red-600/10 text-red-500' if request.path == admin_path || 'text-slate-300 hover:text-white hover:bg-slate-800'}" do %>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  Админка
+                <% end %>
+              </div>
+            </div>
+
+            <!-- Mobile menu button -->
+            <div class="md:hidden">
+              <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 focus:outline-none">
+                <svg id="menu-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                <svg id="close-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-slate-900 border-b border-slate-800">
+          <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <%= link_to root_path, class: "flex items-center gap-3 px-3 py-3 rounded-md text-base font-medium #{'bg-red-900/20 text-red-500' if request.path == root_path || 'text-slate-300 hover:text-white hover:bg-slate-800'}" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+              Главная
+            <% end %>
+            <%= link_to calendar_path, class: "flex items-center gap-3 px-3 py-3 rounded-md text-base font-medium #{'bg-red-900/20 text-red-500' if request.path == calendar_path || 'text-slate-300 hover:text-white hover:bg-slate-800'}" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Календарь
+            <% end %>
+            <%= link_to tracks_path, class: "flex items-center gap-3 px-3 py-3 rounded-md text-base font-medium #{'bg-red-900/20 text-red-500' if request.path == tracks_path || 'text-slate-300 hover:text-white hover:bg-slate-800'}" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Автодромы
+            <% end %>
+            <%= link_to results_path, class: "flex items-center gap-3 px-3 py-3 rounded-md text-base font-medium #{'bg-red-900/20 text-red-500' if request.path == results_path || 'text-slate-300 hover:text-white hover:bg-slate-800'}" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+              Результаты
+            <% end %>
+            <%= link_to wiki_path, class: "flex items-center gap-3 px-3 py-3 rounded-md text-base font-medium #{'bg-red-900/20 text-red-500' if request.path == wiki_path || 'text-slate-300 hover:text-white hover:bg-slate-800'}" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+              AI Тренер
+            <% end %>
+            <%= link_to admin_path, class: "flex items-center gap-3 px-3 py-3 rounded-md text-base font-medium #{'bg-red-900/20 text-red-500' if request.path == admin_path || 'text-slate-300 hover:text-white hover:bg-slate-800'}" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              Админка
+            <% end %>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <%= yield %>
+      </main>
+
+      <!-- Footer -->
+      <footer class="bg-slate-900 border-t border-slate-800 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div class="text-slate-500 text-sm">
+            © 2024 TrackDays.ru. Любительский автоспорт.
+          </div>
+          <div class="flex gap-6">
+            <a href="#" class="text-slate-400 hover:text-white text-sm">Правила</a>
+            <a href="#" class="text-slate-400 hover:text-white text-sm">Контакты</a>
+            <a href="#" class="text-slate-400 hover:text-white text-sm">Сотрудничество</a>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      // Mobile menu toggle
+      document.addEventListener('DOMContentLoaded', function() {
+        const menuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
+        
+        if (menuButton && mobileMenu) {
+          menuButton.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+            menuIcon.classList.toggle('hidden');
+            closeIcon.classList.toggle('hidden');
+          });
+        }
+      });
+    </script>
   </body>
 </html>

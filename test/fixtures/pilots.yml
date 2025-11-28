@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  car: MyString
+  class: MyString
+  best_lap: MyString
+
+two:
+  name: MyString
+  car: MyString
+  class: MyString
+  best_lap: MyString

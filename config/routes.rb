@@ -1,6 +1,12 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Defines the root path route ("/")
-  root "main_page#index"
+  root "home#index"
+  
+  get 'calendar', to: 'calendar#index'
+  get 'tracks', to: 'tracks#index'
+  get 'results', to: 'results#index'
+  get 'wiki', to: 'wiki#index'
+  get 'admin', to: 'admin#index'
+  
+  # API routes for Wiki (AI service)
+  post 'wiki/ask', to: 'wiki#ask'
 end

@@ -1,0 +1,62 @@
+<div>
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+    <div>
+      <h1 class="text-3xl font-bold text-white">Результаты соревнований</h1>
+      <p class="text-slate-400 mt-1">Пилот: <%= @pilot.name %> | Событие: <%= @event&.title || 'N/A' %></p>
+    </div>
+    <div class="flex items-center gap-4 bg-slate-900 p-3 rounded-lg border border-slate-800">
+      <div class="text-right">
+        <div class="text-xs text-slate-500 uppercase font-bold">Лучший круг</div>
+        <div class="text-xl font-mono text-yellow-500 font-bold"><%= @pilot.best_lap %></div>
+      </div>
+      <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#eab308" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Main Chart Placeholder -->
+    <div class="lg:col-span-2 bg-slate-900 p-6 rounded-xl border border-slate-800">
+      <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        Прогресс времени круга
+      </h2>
+      <div class="h-[300px] w-full flex items-center justify-center text-slate-500">
+        <p>График будет отображаться здесь (требуется JavaScript библиотека для графиков)</p>
+      </div>
+    </div>
+
+    <!-- Laptimes Table -->
+    <div class="bg-slate-900 p-6 rounded-xl border border-slate-800">
+      <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Детализация
+      </h2>
+      <div class="overflow-hidden rounded-lg border border-slate-800">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-slate-800 text-slate-400">
+            <tr>
+              <th class="px-4 py-3">Сессия</th>
+              <th class="px-4 py-3">Время (сек)</th>
+              <th class="px-4 py-3">Статус</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800">
+            <% @lap_results.each do |lap| %>
+              <tr class="hover:bg-slate-800/50 transition-colors">
+                <td class="px-4 py-3 font-medium">#<%= lap.session %></td>
+                <td class="px-4 py-3 font-mono text-slate-200"><%= sprintf('%.3f', lap.lap_time) %></td>
+                <td class="px-4 py-3">
+                  <% if lap.respond_to?(:is_valid) ? lap.is_valid : (lap.respond_to?(:valid) ? lap.valid : false) %>
+                    <span class="text-emerald-500 text-xs uppercase font-bold">Valid</span>
+                  <% else %>
+                    <span class="text-red-500 text-xs uppercase font-bold">Invalid</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
