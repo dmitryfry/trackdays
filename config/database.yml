@@ -82,5 +82,4 @@ test:
 production:
   <<: *default
   database: trackdays_production
-  username: difry
-  password: <%= ENV["TRACKDAYS_DATABASE_PASSWORD"] %>
+  # Peer auth via local Unix socket as OS user difry (no password).

@@ -30,6 +30,9 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 
+# Homelab production secrets (optional GEMINI_API_KEY, etc.)
+/.env.production
+
 .idea
 
 /app/assets/builds/*
