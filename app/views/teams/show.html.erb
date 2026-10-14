@@ -1,0 +1,52 @@
+<div class="space-y-8">
+  <!-- Team Header -->
+  <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+    <div class="flex flex-col md:flex-row justify-between md:items-center gap-6">
+      <div>
+        <span class="px-2.5 py-0.5 rounded text-xs font-semibold uppercase bg-slate-800 text-slate-300"><%= @team.city || "Россия" %></span>
+        <h1 class="text-3xl font-extrabold text-white mt-2"><%= @team.name %></h1>
+        <p class="text-slate-400 text-sm mt-1 max-w-2xl"><%= @team.description %></p>
+      </div>
+
+      <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center min-w-[140px]">
+        <div class="text-xs text-slate-500 uppercase font-semibold">Очки команды</div>
+        <div class="text-3xl font-extrabold text-red-500 font-mono mt-1"><%= @team.points %></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pilots List -->
+  <div>
+    <h2 class="text-xl font-bold text-white mb-4">Пилоты команды</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @team.pilots.each do |pilot| %>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-red-500/50 transition">
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-xs text-slate-500">#<%= pilot.racing_number || "99" %></span>
+            <span class="text-xs font-mono text-red-400 font-bold"><%= pilot.points %> pts</span>
+          </div>
+          <h3 class="font-bold text-white text-lg mt-2">
+            <%= link_to pilot.name, pilot_path(pilot), class: "hover:text-red-400 transition" %>
+          </h3>
+          <div class="text-xs text-slate-400 mt-1"><%= pilot.car %></div>
+
+          <div class="grid grid-cols-3 gap-2 mt-4 pt-3 border-t border-slate-800 text-center text-xs font-mono">
+            <div>
+              <div class="text-slate-500">Старты</div>
+              <div class="text-slate-300 font-bold"><%= pilot.starts_count %></div>
+            </div>
+            <div>
+              <div class="text-slate-500">Победы</div>
+              <div class="text-amber-400 font-bold"><%= pilot.wins_count %></div>
+            </div>
+            <div>
+              <div class="text-slate-500">Подиумы</div>
+              <div class="text-slate-300 font-bold"><%= pilot.podiums_count %></div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

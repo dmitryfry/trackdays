@@ -1,0 +1,102 @@
+<div class="space-y-8">
+  <!-- Series Banner -->
+  <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+    <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="px-2.5 py-0.5 rounded text-xs font-semibold uppercase bg-slate-800 text-slate-300"><%= @championship.category %></span>
+          <% if @season %>
+            <span class="px-2.5 py-0.5 rounded text-xs font-semibold bg-red-600/20 text-red-400">Сезон <%= @season.year %></span>
+          <% end %>
+        </div>
+        <h1 class="text-3xl font-extrabold text-white mt-2"><%= @championship.name %></h1>
+        <p class="text-slate-400 text-sm mt-1 max-w-3xl"><%= @championship.description %></p>
+      </div>
+
+      <% if @championship.rules_url.present? %>
+        <div>
+          <a href="<%= @championship.rules_url %>" target="_blank" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold rounded-lg inline-flex items-center gap-1.5 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            Регламент серии
+          </a>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Stages Calendar -->
+  <div>
+    <h2 class="text-xl font-bold text-white mb-4">Календарь этапов сезона</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <% @stages.each do |stage| %>
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 hover:border-slate-700 transition">
+          <div class="flex justify-between items-start text-xs">
+            <span class="text-red-500 font-bold uppercase">Этап <%= stage.stage_number %></span>
+            <span class="px-2 py-0.5 rounded font-medium <%= stage.status == 'completed' ? 'bg-slate-800 text-slate-400' : 'bg-emerald-500/10 text-emerald-400' %>">
+              <%= stage.status == 'completed' ? 'Завершен' : 'Предстоящий' %>
+            </span>
+          </div>
+          <h3 class="font-bold text-white mt-2 text-base"><%= stage.title %></h3>
+          <div class="text-slate-400 text-xs mt-1"><%= stage.track.name %> (<%= stage.track.location %>)</div>
+          <div class="text-slate-500 text-xs mt-3 pt-3 border-t border-slate-800/80 font-mono">
+            <%= stage.date.strftime("%d.%m.%Y") %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Standings Tables by Class -->
+  <div>
+    <h2 class="text-xl font-bold text-white mb-4">Турнирная таблица пилотов</h2>
+
+    <% if @classes.any? %>
+      <div class="space-y-6">
+        <% @classes.each do |r_class| %>
+          <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+            <div class="px-6 py-3 bg-slate-950/80 border-b border-slate-800 flex justify-between items-center">
+              <span class="font-bold text-sm text-red-400 uppercase tracking-wider">Класс: <%= r_class %></span>
+            </div>
+
+            <table class="w-full text-left text-sm text-slate-200">
+              <thead class="bg-slate-950/40 text-xs uppercase text-slate-400 border-b border-slate-800">
+                <tr>
+                  <th class="px-6 py-3 w-12 text-center">Поз</th>
+                  <th class="px-6 py-3">Пилот</th>
+                  <th class="px-6 py-3">Команда</th>
+                  <th class="px-6 py-3 text-right">Очки</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-800/60 text-sm">
+                <% @standings.select { |s| s.racing_class == r_class }.each do |standing| %>
+                  <tr class="hover:bg-slate-800/40 transition <%= 'bg-red-950/10' if standing.position == 1 %>">
+                    <td class="px-6 py-3 text-center font-bold font-mono <%= standing.position == 1 ? 'text-amber-400' : 'text-slate-400' %>">
+                      <%= standing.position %>
+                    </td>
+                    <td class="px-6 py-3 font-semibold text-white">
+                      <%= link_to standing.pilot.name, pilot_path(standing.pilot), class: "hover:text-red-400 transition" %>
+                    </td>
+                    <td class="px-6 py-3 text-slate-400">
+                      <% if standing.team %>
+                        <%= link_to standing.team.name, team_path(standing.team.slug), class: "hover:text-slate-200 transition" %>
+                      <% else %>
+                        Личный зачет
+                      <% end %>
+                    </td>
+                    <td class="px-6 py-3 text-right font-mono font-bold text-red-400 text-base">
+                      <%= standing.points.round(0) %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="p-6 bg-slate-900 border border-slate-800 rounded-xl text-center text-slate-500 text-sm">
+        Результаты сезона формируются.
+      </div>
+    <% end %>
+  </div>
+</div>
