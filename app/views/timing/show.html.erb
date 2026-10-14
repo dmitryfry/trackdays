@@ -1,0 +1,123 @@
+<div class="space-y-6">
+  <!-- Top Session Bar -->
+  <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+    <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
+      <div>
+        <div class="flex items-center gap-3">
+          <span class="text-xs uppercase tracking-wider font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-300">
+            <%= @session.session_type %>
+          </span>
+          <span class="text-xs font-semibold px-2.5 py-0.5 rounded <%= @session.status == 'live' ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-slate-800 text-slate-400' %>">
+            <%= @session.status.upcase %>
+          </span>
+        </div>
+        <h1 class="text-2xl font-bold text-white mt-1"><%= @session.name %></h1>
+        <div class="text-sm text-slate-400 mt-0.5"><%= @session.track.name %> • <%= @session.track.location %></div>
+      </div>
+
+      <div class="flex gap-4 text-xs font-mono text-center">
+        <div class="bg-slate-950 px-3 py-2 rounded border border-slate-800">
+          <div class="text-slate-500">Воздух</div>
+          <div class="text-slate-200 font-bold"><%= @session.weather_temp || "+22°C" %></div>
+        </div>
+        <div class="bg-slate-950 px-3 py-2 rounded border border-slate-800">
+          <div class="text-slate-500">Асфальт</div>
+          <div class="text-slate-200 font-bold"><%= @session.track_temp || "+28°C" %></div>
+        </div>
+        <div class="bg-slate-950 px-3 py-2 rounded border border-slate-800">
+          <div class="text-slate-500">Состояние</div>
+          <div class="text-slate-200 font-bold"><%= @session.condition || "Сухо" %></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Timing Leaderboard Table -->
+  <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-2xl">
+    <div class="p-4 border-b border-slate-800 flex justify-between items-center bg-slate-950/40">
+      <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider">Таблица времен и сектора</h2>
+      <span class="text-xs text-slate-500 flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        Автообновление активно
+      </span>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm text-slate-200">
+        <thead class="bg-slate-950/90 text-xs uppercase text-slate-400 font-mono border-b border-slate-800">
+          <tr>
+            <th class="px-4 py-3 text-center w-12">Поз</th>
+            <th class="px-4 py-3">Пилот</th>
+            <th class="px-4 py-3">Автомобиль</th>
+            <th class="px-4 py-3 text-center">Круг</th>
+            <th class="px-4 py-3 text-right">Время круга</th>
+            <th class="px-4 py-3 text-right">Сектор 1</th>
+            <th class="px-4 py-3 text-right">Сектор 2</th>
+            <th class="px-4 py-3 text-right">Сектор 3</th>
+            <th class="px-4 py-3 text-right">V max</th>
+            <th class="px-4 py-3 text-right">Отставание</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800/60 font-mono text-xs">
+          <% leader_time = @lap_results.first&.lap_time %>
+          <% @lap_results.each_with_index do |res, index| %>
+            <% is_leader = (index == 0) %>
+            <tr class="hover:bg-slate-800/40 transition <%= 'bg-red-950/20' if is_leader %>">
+              <td class="px-4 py-3 text-center font-bold <%= is_leader ? 'text-red-400' : 'text-slate-400' %>">
+                <%= index + 1 %>
+              </td>
+              <td class="px-4 py-3 font-sans font-semibold text-white">
+                <%= link_to res.pilot.name, pilot_path(res.pilot), class: "hover:text-red-400 transition" %>
+              </td>
+              <td class="px-4 py-3 font-sans text-slate-400">
+                <%= res.pilot.car %>
+              </td>
+              <td class="px-4 py-3 text-center text-slate-400">
+                <%= res.lap_number || res.session %>
+              </td>
+              <td class="px-4 py-3 text-right font-bold <%= is_leader ? 'text-purple-400' : 'text-emerald-400' %>">
+                <%= res.formatted_lap_time %>
+              </td>
+              <!-- Sector 1 -->
+              <td class="px-4 py-3 text-right <%= res.sector_1_time && @best_s1 && res.sector_1_time <= @best_s1 ? 'text-purple-400 font-bold' : 'text-emerald-400' %>">
+                <%= res.sector_1_time ? sprintf("%.3f", res.sector_1_time) : "-" %>
+              </td>
+              <!-- Sector 2 -->
+              <td class="px-4 py-3 text-right <%= res.sector_2_time && @best_s2 && res.sector_2_time <= @best_s2 ? 'text-purple-400 font-bold' : 'text-emerald-400' %>">
+                <%= res.sector_2_time ? sprintf("%.3f", res.sector_2_time) : "-" %>
+              </td>
+              <!-- Sector 3 -->
+              <td class="px-4 py-3 text-right <%= res.sector_3_time && @best_s3 && res.sector_3_time <= @best_s3 ? 'text-purple-400 font-bold' : 'text-emerald-400' %>">
+                <%= res.sector_3_time ? sprintf("%.3f", res.sector_3_time) : "-" %>
+              </td>
+              <!-- Top Speed -->
+              <td class="px-4 py-3 text-right text-slate-300">
+                <%= res.top_speed ? "#{res.top_speed.round(1)} км/ч" : "-" %>
+              </td>
+              <!-- Gap -->
+              <td class="px-4 py-3 text-right text-slate-400">
+                <%= is_leader ? "ЛИДЕР" : (res.gap.presence || (leader_time && res.lap_time ? "+#{sprintf('%.3f', res.lap_time - leader_time)}" : "-")) %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="flex flex-wrap gap-4 text-xs text-slate-400 pt-2">
+    <div class="flex items-center gap-1.5">
+      <span class="w-3 h-3 bg-purple-500 rounded-sm"></span>
+      <span>Фиолетовый: лучший сектор сессии</span>
+    </div>
+    <div class="flex items-center gap-1.5">
+      <span class="w-3 h-3 bg-emerald-500 rounded-sm"></span>
+      <span>Зеленый: личное улучшение</span>
+    </div>
+    <div class="flex items-center gap-1.5">
+      <span class="w-3 h-3 bg-red-600 rounded-sm"></span>
+      <span>P1: лидер заезда</span>
+    </div>
+  </div>
+</div>

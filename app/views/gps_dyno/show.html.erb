@@ -1,0 +1,82 @@
+<div class="space-y-6">
+  <!-- Header Card -->
+  <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+    <div class="flex flex-col md:flex-row justify-between md:items-center gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-300">GPS Замер</span>
+          <span class="text-xs font-semibold px-2 py-0.5 rounded bg-red-600/20 text-red-400"><%= @run.standard %></span>
+        </div>
+        <h1 class="text-2xl font-bold text-white mt-2"><%= @run.title %></h1>
+        <div class="text-slate-400 text-sm mt-0.5"><%= @run.car_model %> • Владелец: <%= @run.pilot&.name || "Анонимный пилот" %></div>
+      </div>
+
+      <div class="flex gap-4">
+        <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl text-center min-w-[130px]">
+          <div class="text-xs text-slate-400 uppercase font-semibold">Мощность</div>
+          <div class="text-3xl font-extrabold text-red-500 font-mono mt-1"><%= @run.calculated_hp %> <span class="text-sm font-normal text-slate-400">л.с.</span></div>
+        </div>
+        <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl text-center min-w-[130px]">
+          <div class="text-xs text-slate-400 uppercase font-semibold">Момент</div>
+          <div class="text-3xl font-extrabold text-amber-400 font-mono mt-1"><%= @run.calculated_torque_nm %> <span class="text-sm font-normal text-slate-400">Н·м</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart Card -->
+  <div class="bg-slate-900 border border-slate-800 rounded-xl p-6">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-base font-semibold text-white">Кривая мощности P(v) от скорости</h2>
+      <div class="text-xs text-slate-400">Масса машины: <span class="text-white font-mono"><%= @run.car_mass_kg.round %> кг</span></div>
+    </div>
+
+    <!-- SVG Dyno Chart -->
+    <% chart_points = @run.chart_data || [] %>
+    <% if chart_points.any? %>
+      <% 
+        max_hp = [chart_points.map { |p| p["hp"] || p[:hp] || 0 }.max, 100].max
+        max_speed = [chart_points.map { |p| p["speed_kmh"] || p[:speed_kmh] || 0 }.max, 150].max
+        min_speed = [chart_points.map { |p| p["speed_kmh"] || p[:speed_kmh] || 0 }.min, 50].min
+        width = 800
+        height = 300
+        padding = 40
+        plot_w = width - padding * 2
+        plot_h = height - padding * 2
+
+        path_d = chart_points.map.with_index do |pt, i|
+          spd = pt["speed_kmh"] || pt[:speed_kmh] || 0
+          hp = pt["hp"] || pt[:hp] || 0
+          x = padding + ((spd - min_speed) / (max_speed - min_speed + 0.001)) * plot_w
+          y = (height - padding) - (hp.to_f / max_hp) * plot_h
+          "#{i == 0 ? 'M' : 'L'} #{x.round(1)} #{y.round(1)}"
+        end.join(" ")
+      %>
+      <div class="w-full overflow-x-auto">
+        <svg viewBox="0 0 <%= width %> <%= height %>" class="w-full h-auto bg-slate-950 rounded-lg p-2 border border-slate-800">
+          <!-- Grid lines -->
+          <line x1="<%= padding %>" y1="<%= height - padding %>" x2="<%= width - padding %>" y2="<%= height - padding %>" stroke="#334155" stroke-width="1" />
+          <line x1="<%= padding %>" y1="<%= padding %>" x2="<%= padding %>" y2="<%= height - padding %>" stroke="#334155" stroke-width="1" />
+          <line x1="<%= padding %>" y1="<%= padding + plot_h/2 %>" x2="<%= width - padding %>" y2="<%= padding + plot_h/2 %>" stroke="#1e293b" stroke-dasharray="4" stroke-width="1" />
+
+          <!-- Labels -->
+          <text x="<%= padding %>" y="<%= padding - 10 %>" fill="#94a3b8" font-size="11" font-family="monospace"><%= max_hp %> л.с.</text>
+          <text x="<%= width - padding %>" y="<%= height - padding + 20 %>" fill="#94a3b8" font-size="11" text-anchor="end" font-family="monospace"><%= max_speed.round %> км/ч</text>
+          <text x="<%= padding %>" y="<%= height - padding + 20 %>" fill="#94a3b8" font-size="11" font-family="monospace"><%= min_speed.round %> км/ч</text>
+
+          <!-- Power Curve -->
+          <path d="<%= path_d %>" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </div>
+    <% else %>
+      <div class="h-48 flex items-center justify-center text-slate-500 text-sm">
+        Данные точек разгона отсутствуют.
+      </div>
+    <% end %>
+  </div>
+
+  <div class="flex justify-between items-center text-xs text-slate-500">
+    <div>Источник: <%= @run.source_file_name || "Ручной расчет" %></div>
+    <%= link_to "← Все замеры", power_path, class: "text-red-400 hover:text-red-300 font-medium" %>
+  </div>
+</div>
