@@ -3,11 +3,11 @@
 one:
   name: MyString
   car: MyString
-  class: MyString
+  pilot_class: MyString
   best_lap: MyString
 
 two:
   name: MyString
   car: MyString
-  class: MyString
+  pilot_class: MyString
   best_lap: MyString

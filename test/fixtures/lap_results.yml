@@ -3,13 +3,13 @@
 one:
   session: 1
   lap_time: 9.99
-  valid: false
+  is_valid: false
   event: one
   pilot: one
 
 two:
   session: 1
   lap_time: 9.99
-  valid: false
+  is_valid: false
   event: two
   pilot: two

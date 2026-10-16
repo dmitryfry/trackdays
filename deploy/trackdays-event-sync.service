@@ -1,0 +1,10 @@
+[Unit]
+Description=Sync TrackDays external autodrome calendars
+After=network.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/home/difry/projects/trackdays
+Environment=RAILS_ENV=production
+EnvironmentFile=-/home/difry/projects/trackdays/.env.production
+ExecStart=/bin/bash -lc 'bundle exec rails events:sync'

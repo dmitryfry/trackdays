@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily sync of TrackDays external calendars
+
+[Timer]
+OnCalendar=*-*-* 03:30:00
+Persistent=true
+Unit=trackdays-event-sync.service
+
+[Install]
+WantedBy=timers.target
