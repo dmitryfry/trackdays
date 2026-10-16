@@ -3,6 +3,7 @@ class Pilot < ApplicationRecord
   has_many :lap_results, dependent: :destroy
   has_many :championship_standings, dependent: :destroy
   has_many :gps_dyno_runs, dependent: :nullify
+  has_many :garage_cars, dependent: :nullify
 
   validates :name, presence: true
 

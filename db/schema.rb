@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_10_14_120001) do
+ActiveRecord::Schema[7.0].define(version: 2026_10_16_140410) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -85,6 +85,28 @@ ActiveRecord::Schema[7.0].define(version: 2026_10_14_120001) do
     t.index ["track_id"], name: "index_events_on_track_id"
   end
 
+  create_table "garage_cars", force: :cascade do |t|
+    t.bigint "pilot_id"
+    t.string "make", null: false
+    t.string "model", null: false
+    t.integer "year"
+    t.string "car_class", default: "Street", null: false
+    t.decimal "mass_kg", precision: 6, scale: 1
+    t.integer "power_hp"
+    t.decimal "weight_power_ratio", precision: 5, scale: 2
+    t.string "drivetrain", default: "RWD", null: false
+    t.text "specs"
+    t.string "image_url"
+    t.boolean "for_rent", default: false, null: false
+    t.boolean "car_of_the_week", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["car_class"], name: "index_garage_cars_on_car_class"
+    t.index ["car_of_the_week"], name: "index_garage_cars_on_car_of_the_week"
+    t.index ["for_rent"], name: "index_garage_cars_on_for_rent"
+    t.index ["pilot_id"], name: "index_garage_cars_on_pilot_id"
+  end
+
   create_table "gps_dyno_runs", force: :cascade do |t|
     t.bigint "pilot_id"
     t.string "title", null: false
@@ -119,6 +141,24 @@ ActiveRecord::Schema[7.0].define(version: 2026_10_14_120001) do
     t.index ["event_id"], name: "index_lap_results_on_event_id"
     t.index ["pilot_id"], name: "index_lap_results_on_pilot_id"
     t.index ["timing_session_id"], name: "index_lap_results_on_timing_session_id"
+  end
+
+  create_table "logbook_entries", force: :cascade do |t|
+    t.bigint "garage_car_id", null: false
+    t.bigint "event_id"
+    t.bigint "lap_result_id"
+    t.bigint "gps_dyno_run_id"
+    t.string "title", null: false
+    t.text "content"
+    t.date "date"
+    t.string "onboard_video_url"
+    t.string "onboard_video_platform"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_logbook_entries_on_event_id"
+    t.index ["garage_car_id"], name: "index_logbook_entries_on_garage_car_id"
+    t.index ["gps_dyno_run_id"], name: "index_logbook_entries_on_gps_dyno_run_id"
+    t.index ["lap_result_id"], name: "index_logbook_entries_on_lap_result_id"
   end
 
   create_table "pilots", force: :cascade do |t|
@@ -190,10 +230,15 @@ ActiveRecord::Schema[7.0].define(version: 2026_10_14_120001) do
   add_foreign_key "championship_standings", "pilots"
   add_foreign_key "championship_standings", "teams"
   add_foreign_key "events", "tracks"
+  add_foreign_key "garage_cars", "pilots"
   add_foreign_key "gps_dyno_runs", "pilots"
   add_foreign_key "lap_results", "events"
   add_foreign_key "lap_results", "pilots"
   add_foreign_key "lap_results", "timing_sessions"
+  add_foreign_key "logbook_entries", "events"
+  add_foreign_key "logbook_entries", "garage_cars"
+  add_foreign_key "logbook_entries", "gps_dyno_runs"
+  add_foreign_key "logbook_entries", "lap_results"
   add_foreign_key "pilots", "teams"
   add_foreign_key "timing_sessions", "events"
   add_foreign_key "timing_sessions", "tracks"

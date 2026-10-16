@@ -1,0 +1,85 @@
+<div class="max-w-2xl mx-auto px-4 py-8">
+  <div class="mb-6">
+    <%= link_to "← Назад в Гараж", garage_path, class: "text-xs font-semibold text-zinc-400 hover:text-white transition" %>
+  </div>
+
+  <div class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 sm:p-8 shadow-xl">
+    <h1 class="text-2xl font-black text-white mb-2">Добавить автомобиль в Гараж</h1>
+    <p class="text-xs text-zinc-400 mb-6">Заполните характеристики боевого или трекового авто для карточки сообщества</p>
+
+    <%= form_with model: @car, url: garage_path, method: :post, class: "space-y-4" do |f| %>
+      <% if @car.errors.any? %>
+        <div class="bg-red-950/50 border border-red-500/50 rounded-xl p-4 text-xs text-red-300">
+          <ul class="list-disc pl-4 space-y-1">
+            <% @car.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <%= f.label :make, "Марка *", class: "block text-xs font-semibold text-zinc-300 mb-1" %>
+          <%= f.text_field :make, placeholder: "Porsche / BMW / Subaru", class: "w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500", required: true %>
+        </div>
+        <div>
+          <%= f.label :model, "Модель *", class: "block text-xs font-semibold text-zinc-300 mb-1" %>
+          <%= f.text_field :model, placeholder: "911 GT3 RS / M3 e92", class: "w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500", required: true %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div>
+          <%= f.label :year, "Год", class: "block text-xs font-semibold text-zinc-300 mb-1" %>
+          <%= f.number_field :year, placeholder: "2021", class: "w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" %>
+        </div>
+        <div>
+          <%= f.label :car_class, "Класс", class: "block text-xs font-semibold text-zinc-300 mb-1" %>
+          <%= f.select :car_class, ["Street", "Touring", "GT", "SuperSport", "Time Attack", "Drift"], {}, class: "w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" %>
+        </div>
+        <div>
+          <%= f.label :mass_kg, "Масса (кг)", class: "block text-xs font-semibold text-zinc-300 mb-1" %>
+          <%= f.number_field :mass_kg, step: "0.1", placeholder: "1350", class: "w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" %>
+        </div>
+        <div>
+          <%= f.label :power_hp, "Мощность (л.с.)", class: "block text-xs font-semibold text-zinc-300 mb-1" %>
+          <%= f.number_field :power_hp, placeholder: "450", class: "w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" %>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <%= f.label :drivetrain, "Привод", class: "block text-xs font-semibold text-zinc-300 mb-1" %>
+          <%= f.select :drivetrain, ["RWD", "AWD", "FWD"], {}, class: "w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" %>
+        </div>
+        <div>
+          <%= f.label :pilot_id, "Пилот / Владелец", class: "block text-xs font-semibold text-zinc-300 mb-1" %>
+          <%= f.collection_select :pilot_id, Pilot.all, :id, :name, { include_blank: "Частный владелец" }, class: "w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :image_url, "URL фотографии", class: "block text-xs font-semibold text-zinc-300 mb-1" %>
+        <%= f.url_field :image_url, placeholder: "https://...", class: "w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" %>
+      </div>
+
+      <div>
+        <%= f.label :specs, "Спек-лист доработок (подвеска, тормоза, двигатель, каркас и т.д.)", class: "block text-xs font-semibold text-zinc-300 mb-1" %>
+        <%= f.text_area :specs, rows: 4, placeholder: "- Тормоза: AP Racing 6-pot\n- Подвеска: KW Clubsport 3-way\n- Двигатель: ECU tune stage 2...", class: "w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" %>
+      </div>
+
+      <div class="pt-2">
+        <label class="inline-flex items-center gap-2 cursor-pointer">
+          <%= f.check_box :for_rent, class: "rounded bg-zinc-950 border-zinc-700 text-red-600 focus:ring-0" %>
+          <span class="text-xs font-medium text-zinc-300">Доступен в аренду на трек-дни</span>
+        </label>
+      </div>
+
+      <div class="pt-4 flex justify-end gap-3">
+        <%= link_to "Отмена", garage_path, class: "px-4 py-2 border border-zinc-700 rounded-xl text-xs font-medium text-zinc-400 hover:text-white transition" %>
+        <%= f.submit "Создать карточку", class: "px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-bold text-xs rounded-xl shadow cursor-pointer transition" %>
+      </div>
+    <% end %>
+  </div>
+</div>

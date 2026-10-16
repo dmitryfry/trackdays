@@ -28,6 +28,14 @@ Rails.application.routes.draw do
   get 'teams', to: 'teams#index', as: :teams
   get 'teams/:slug', to: 'teams#show', as: :team
 
+  # Garage & Car Logbooks
+  get 'garage', to: 'garage#index', as: :garage
+  get 'garage/feed', to: 'garage#feed', as: :garage_feed
+  get 'garage/new', to: 'garage#new', as: :new_garage_car
+  post 'garage', to: 'garage#create'
+  get 'garage/:id', to: 'garage#show', as: :garage_car
+  post 'garage/:id/logbook', to: 'garage#create_logbook_entry', as: :create_logbook_entry
+
   # API routes for Wiki (AI service)
   post 'wiki/ask', to: 'wiki#ask'
 end
