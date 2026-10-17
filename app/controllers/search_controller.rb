@@ -11,7 +11,7 @@ class SearchController < ApplicationController
 
     # 1. Tracks
     Track.where("name ILIKE ? OR location ILIKE ?", wildcard, wildcard).limit(5).each do |t|
-      results << { type: "Автодром", title: t.name, subtitle: t.location, url: track_path(t) }
+      results << { type: "Автодром", title: t.name, subtitle: t.location, url: tracks_path }
     end
 
     # 2. Events / Track days
@@ -36,7 +36,7 @@ class SearchController < ApplicationController
 
     # 6. Marketplace
     MarketListing.active.where("title ILIKE ? OR city ILIKE ?", wildcard, wildcard).limit(5).each do |m|
-      results << { type: "Маркетплейс", title: m.title, subtitle: "#{m.formatted_price} • #{m.city}", url: market_item_path(m) }
+      results << { type: "Маркетплейс", title: m.title, subtitle: "#{m.formatted_price} • #{m.city}", url: market_listing_path(m) }
     end
 
     # 7. Articles / Blogs
