@@ -51,6 +51,28 @@ Rails.application.routes.draw do
   get 'booking', to: 'booking#index', as: :booking
   post 'booking', to: 'booking#create'
 
+  # Auth & User Profile
+  get 'login', to: 'sessions#new', as: :login
+  post 'login', to: 'sessions#create'
+  delete 'logout', to: 'sessions#destroy', as: :logout
+  get 'register', to: 'users#new', as: :register
+  post 'users', to: 'users#create'
+  get 'profile', to: 'users#show', as: :profile
+
+  # Community Blogs & Articles
+  get 'blogs', to: 'blogs#index', as: :blogs
+  get 'blogs/new', to: 'blogs#new', as: :new_blog_post
+  post 'blogs', to: 'blogs#create'
+  get 'blogs/:slug', to: 'blogs#show', as: :blog_post
+  post 'blogs/:slug/comments', to: 'blogs#create_comment', as: :blog_post_comments
+
+  # News & Media
+  get 'news', to: 'media#news', as: :news
+  get 'videos', to: 'media#videos', as: :videos
+
+  # Global Omnisearch (Cmd+K)
+  get 'search', to: 'search#index', as: :search
+
   # API routes for Wiki (AI service)
   post 'wiki/ask', to: 'wiki#ask'
 end

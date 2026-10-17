@@ -1,0 +1,69 @@
+<div class="space-y-8">
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 border border-slate-800 p-6 rounded-xl">
+    <div>
+      <h1 class="text-3xl font-extrabold text-white tracking-tight">Блоги сообщества и статьи</h1>
+      <p class="text-slate-400 text-sm mt-1">Отчеты с трек-дней, гайды по подготовке техники, телеметрия и настройка подвески</p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <% if logged_in? %>
+        <%= link_to "+ Написать статью", new_blog_post_path, class: "px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-xs font-semibold shadow-lg transition-colors" %>
+      <% else %>
+        <%= link_to "Войти для публикации", login_path, class: "px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold transition-colors" %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Category filter tabs -->
+  <div class="flex gap-2 overflow-x-auto pb-2 border-b border-slate-800 text-xs">
+    <%= link_to "Все публикации", blogs_path, class: "px-3 py-1.5 rounded-lg font-medium whitespace-nowrap #{params[:category].blank? ? 'bg-red-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}" %>
+    <%= link_to "Отчеты с гонок", blogs_path(category: 'report'), class: "px-3 py-1.5 rounded-lg font-medium whitespace-nowrap #{params[:category] == 'report' ? 'bg-red-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}" %>
+    <%= link_to "Гайды и тюнинг", blogs_path(category: 'guide'), class: "px-3 py-1.5 rounded-lg font-medium whitespace-nowrap #{params[:category] == 'guide' ? 'bg-red-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}" %>
+    <%= link_to "Настройка подвески", blogs_path(category: 'setup'), class: "px-3 py-1.5 rounded-lg font-medium whitespace-nowrap #{params[:category] == 'setup' ? 'bg-red-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}" %>
+    <%= link_to "Новости автоспорта", blogs_path(category: 'news'), class: "px-3 py-1.5 rounded-lg font-medium whitespace-nowrap #{params[:category] == 'news' ? 'bg-red-600 text-white' : 'text-slate-400 hover:text-white hover:bg-slate-800'}" %>
+  </div>
+
+  <!-- Articles grid -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <% @articles.each do |article| %>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden flex flex-col justify-between hover:border-slate-700 transition-all group">
+        <div>
+          <div class="h-48 bg-slate-950 overflow-hidden relative">
+            <% if article.cover_image_url.present? %>
+              <%= image_tag article.cover_image_url, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300", alt: article.title %>
+            <% else %>
+              <div class="w-full h-full flex items-center justify-center bg-slate-800 text-slate-600">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+              </div>
+            <% end %>
+            <div class="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-slate-900/90 text-red-400 border border-slate-800">
+              <%= article.category_title %>
+            </div>
+          </div>
+
+          <div class="p-5">
+            <div class="flex items-center gap-2 text-xs text-slate-400 mb-2">
+              <span class="font-semibold text-slate-300"><%= article.user.name %></span>
+              <span>•</span>
+              <span><%= article.created_at.strftime("%d %b %Y") %></span>
+            </div>
+            <h2 class="font-bold text-white text-lg group-hover:text-red-400 transition-colors mb-2 leading-snug">
+              <%= link_to article.title, blog_post_path(article.slug) %>
+            </h2>
+            <p class="text-xs text-slate-400 line-clamp-3 leading-relaxed">
+              <%= article.summary || truncate(article.content, length: 140) %>
+            </p>
+          </div>
+        </div>
+
+        <div class="px-5 py-4 border-t border-slate-800 flex justify-between items-center text-xs text-slate-500">
+          <div class="flex items-center gap-3">
+            <span>👁 <%= article.views_count %></span>
+            <span>💬 <%= article.comments.count %></span>
+          </div>
+          <%= link_to "Читать далее →", blog_post_path(article.slug), class: "text-red-400 font-semibold hover:underline" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

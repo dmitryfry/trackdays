@@ -1,0 +1,51 @@
+<div class="space-y-8">
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 border border-slate-800 p-6 rounded-xl">
+    <div>
+      <h1 class="text-3xl font-extrabold text-white tracking-tight">Видеогалерея автоспорта</h1>
+      <p class="text-slate-400 text-sm mt-1">Онборды лучших кругов, прямые трансляции гонок и обучающие материалы</p>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <%= link_to "Все видео", videos_path, class: "px-3 py-1.5 rounded-lg text-xs font-semibold #{params[:category].blank? ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-300'}" %>
+      <%= link_to "Онборды", videos_path(category: 'onboard'), class: "px-3 py-1.5 rounded-lg text-xs font-semibold #{params[:category] == 'onboard' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-300'}" %>
+      <%= link_to "Трансляции", videos_path(category: 'broadcast'), class: "px-3 py-1.5 rounded-lg text-xs font-semibold #{params[:category] == 'broadcast' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-300'}" %>
+      <%= link_to "Обучение", videos_path(category: 'tutorial'), class: "px-3 py-1.5 rounded-lg text-xs font-semibold #{params[:category] == 'tutorial' ? 'bg-red-600 text-white' : 'bg-slate-800 text-slate-300'}" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <% @videos.each do |video| %>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden hover:border-slate-700 transition-all flex flex-col justify-between">
+        <div>
+          <div class="h-44 bg-slate-950 overflow-hidden relative group">
+            <% if video.thumbnail_url.present? %>
+              <%= image_tag video.thumbnail_url, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300", alt: video.title %>
+            <% else %>
+              <div class="w-full h-full flex items-center justify-center bg-slate-800 text-slate-500">
+                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+            <% end %>
+            <a href="<%= video.video_url %>" target="_blank" rel="noopener" class="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-all">
+              <div class="w-12 h-12 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <svg class="w-6 h-6 ml-0.5" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              </div>
+            </a>
+          </div>
+
+          <div class="p-4">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-red-400 bg-red-950/60 px-2 py-0.5 rounded border border-red-900/40">
+              <%= video.category %>
+            </span>
+            <h3 class="font-bold text-white text-base mt-2 mb-1 leading-snug"><%= video.title %></h3>
+            <p class="text-xs text-slate-400 line-clamp-2"><%= video.description %></p>
+          </div>
+        </div>
+
+        <div class="p-4 border-t border-slate-800 flex justify-between items-center text-[11px] text-slate-500">
+          <span><%= video.platform.upcase %></span>
+          <a href="<%= video.video_url %>" target="_blank" rel="noopener" class="text-red-400 font-semibold hover:underline">Смотреть ↗</a>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

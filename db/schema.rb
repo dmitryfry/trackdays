@@ -10,9 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_10_17_110000) do
+ActiveRecord::Schema[7.0].define(version: 2026_10_17_120000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "articles", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "title", null: false
+    t.string "slug", null: false
+    t.string "category", default: "report", null: false
+    t.text "summary"
+    t.text "content", null: false
+    t.string "cover_image_url"
+    t.integer "views_count", default: 0, null: false
+    t.integer "likes_count", default: 0, null: false
+    t.boolean "published", default: true, null: false
+    t.datetime "published_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category"], name: "index_articles_on_category"
+    t.index ["slug"], name: "index_articles_on_slug", unique: true
+    t.index ["user_id"], name: "index_articles_on_user_id"
+  end
 
   create_table "championship_seasons", force: :cascade do |t|
     t.bigint "championship_id", null: false
@@ -62,6 +81,16 @@ ActiveRecord::Schema[7.0].define(version: 2026_10_17_110000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["slug"], name: "index_championships_on_slug", unique: true
+  end
+
+  create_table "comments", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "article_id", null: false
+    t.text "body", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["article_id"], name: "index_comments_on_article_id"
+    t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
   create_table "events", force: :cascade do |t|
@@ -197,6 +226,21 @@ ActiveRecord::Schema[7.0].define(version: 2026_10_17_110000) do
     t.index ["market_category_id"], name: "index_market_listings_on_market_category_id"
     t.index ["pilot_id"], name: "index_market_listings_on_pilot_id"
     t.index ["status"], name: "index_market_listings_on_status"
+  end
+
+  create_table "media_videos", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "video_url", null: false
+    t.string "platform", default: "youtube", null: false
+    t.string "category", default: "onboard", null: false
+    t.text "description"
+    t.string "thumbnail_url"
+    t.bigint "track_id"
+    t.bigint "pilot_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["pilot_id"], name: "index_media_videos_on_pilot_id"
+    t.index ["track_id"], name: "index_media_videos_on_track_id"
   end
 
   create_table "pilots", force: :cascade do |t|
@@ -342,12 +386,30 @@ ActiveRecord::Schema[7.0].define(version: 2026_10_17_110000) do
     t.index ["source_key"], name: "index_tracks_on_source_key", unique: true
   end
 
+  create_table "users", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email", null: false
+    t.string "password_digest", null: false
+    t.string "role", default: "pilot", null: false
+    t.string "avatar_url"
+    t.string "telegram_username"
+    t.text "bio"
+    t.bigint "pilot_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["pilot_id"], name: "index_users_on_pilot_id"
+  end
+
+  add_foreign_key "articles", "users"
   add_foreign_key "championship_seasons", "championships"
   add_foreign_key "championship_stages", "championship_seasons"
   add_foreign_key "championship_stages", "tracks"
   add_foreign_key "championship_standings", "championship_seasons"
   add_foreign_key "championship_standings", "pilots"
   add_foreign_key "championship_standings", "teams"
+  add_foreign_key "comments", "articles"
+  add_foreign_key "comments", "users"
   add_foreign_key "events", "tracks"
   add_foreign_key "garage_cars", "pilots"
   add_foreign_key "gps_dyno_runs", "pilots"
@@ -361,6 +423,8 @@ ActiveRecord::Schema[7.0].define(version: 2026_10_17_110000) do
   add_foreign_key "market_listings", "garage_cars"
   add_foreign_key "market_listings", "market_categories"
   add_foreign_key "market_listings", "pilots"
+  add_foreign_key "media_videos", "pilots"
+  add_foreign_key "media_videos", "tracks"
   add_foreign_key "pilots", "teams"
   add_foreign_key "sim_bookings", "pilots"
   add_foreign_key "sim_bookings", "simulator_slots"
@@ -369,4 +433,5 @@ ActiveRecord::Schema[7.0].define(version: 2026_10_17_110000) do
   add_foreign_key "sim_servers", "tracks"
   add_foreign_key "timing_sessions", "events"
   add_foreign_key "timing_sessions", "tracks"
+  add_foreign_key "users", "pilots"
 end

@@ -1,0 +1,53 @@
+<div class="max-w-3xl mx-auto space-y-8">
+  <div>
+    <%= link_to "← Назад ко всем статьям", blogs_path, class: "text-xs text-red-400 hover:underline" %>
+    <h1 class="text-3xl font-extrabold text-white mt-2">Новая публикация в блоге</h1>
+    <p class="text-xs text-slate-400 mt-1">Поделитесь своим гоночным опытом, настройками авто или отчетом о прошедшем этапе</p>
+  </div>
+
+  <% if @article.errors.any? %>
+    <div class="p-4 bg-rose-950/80 border border-rose-800 text-rose-200 rounded-xl text-xs space-y-1">
+      <div class="font-bold">Ошибки сохранения:</div>
+      <ul class="list-disc pl-4">
+        <% @article.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 md:p-8">
+    <%= form_with model: @article, url: blogs_path, local: true, class: "space-y-5" do |f| %>
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Заголовок статьи</label>
+        <%= f.text_field :title, placeholder: "Например: Анализ телеметрии на Moscow Raceway и разбор торможений", class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500", required: true %>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Категория</label>
+          <%= f.select :category, [["Отчет с гонки / трек-дня", "report"], ["Гайд и тюнинг", "guide"], ["Настройка подвески и сход-развал", "setup"], ["Новости автоспорта", "news"]], {}, class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" %>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Ссылка на обложку (URL)</label>
+          <%= f.text_field :cover_image_url, placeholder: "https://images.unsplash.com/...", class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" %>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Краткое описание (лид статьи)</label>
+        <%= f.text_area :summary, rows: 2, placeholder: "Краткий анонс для карточки в каталоге блогов...", class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500" %>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-slate-300 mb-1.5">Текст публикации</label>
+        <%= f.text_area :content, rows: 12, placeholder: "Подробный рассказ о подготовке, траекториях, давлении в шинах...", class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500 font-mono text-xs leading-relaxed", required: true %>
+      </div>
+
+      <div class="pt-4 border-t border-slate-800 flex justify-end gap-3">
+        <%= link_to "Отмена", blogs_path, class: "px-4 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold transition-colors" %>
+        <%= f.submit "Опубликовать в блоге", class: "px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white rounded-xl text-xs font-bold transition-colors cursor-pointer shadow-lg" %>
+      </div>
+    <% end %>
+  </div>
+</div>
