@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_10_16_140410) do
+ActiveRecord::Schema[7.0].define(version: 2026_10_17_100000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -161,6 +161,44 @@ ActiveRecord::Schema[7.0].define(version: 2026_10_16_140410) do
     t.index ["lap_result_id"], name: "index_logbook_entries_on_lap_result_id"
   end
 
+  create_table "market_categories", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "slug", null: false
+    t.string "icon"
+    t.integer "position", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_market_categories_on_slug", unique: true
+  end
+
+  create_table "market_listings", force: :cascade do |t|
+    t.bigint "market_category_id", null: false
+    t.bigint "pilot_id"
+    t.bigint "garage_car_id"
+    t.string "deal_type", default: "sale", null: false
+    t.string "title", null: false
+    t.text "description", null: false
+    t.decimal "price", precision: 12, scale: 2
+    t.string "currency", default: "RUB", null: false
+    t.string "price_period"
+    t.string "city", null: false
+    t.string "status", default: "active", null: false
+    t.string "contact_name", null: false
+    t.string "contact_phone"
+    t.string "contact_telegram"
+    t.string "image_url"
+    t.jsonb "gallery_urls", default: []
+    t.jsonb "specs_data", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["city"], name: "index_market_listings_on_city"
+    t.index ["deal_type"], name: "index_market_listings_on_deal_type"
+    t.index ["garage_car_id"], name: "index_market_listings_on_garage_car_id"
+    t.index ["market_category_id"], name: "index_market_listings_on_market_category_id"
+    t.index ["pilot_id"], name: "index_market_listings_on_pilot_id"
+    t.index ["status"], name: "index_market_listings_on_status"
+  end
+
   create_table "pilots", force: :cascade do |t|
     t.string "name"
     t.string "car"
@@ -239,6 +277,9 @@ ActiveRecord::Schema[7.0].define(version: 2026_10_16_140410) do
   add_foreign_key "logbook_entries", "garage_cars"
   add_foreign_key "logbook_entries", "gps_dyno_runs"
   add_foreign_key "logbook_entries", "lap_results"
+  add_foreign_key "market_listings", "garage_cars"
+  add_foreign_key "market_listings", "market_categories"
+  add_foreign_key "market_listings", "pilots"
   add_foreign_key "pilots", "teams"
   add_foreign_key "timing_sessions", "events"
   add_foreign_key "timing_sessions", "tracks"

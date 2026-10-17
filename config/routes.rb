@@ -36,6 +36,12 @@ Rails.application.routes.draw do
   get 'garage/:id', to: 'garage#show', as: :garage_car
   post 'garage/:id/logbook', to: 'garage#create_logbook_entry', as: :create_logbook_entry
 
+  # Marketplace
+  get 'market', to: 'market#index', as: :market
+  get 'market/new', to: 'market#new', as: :new_market_listing
+  post 'market', to: 'market#create'
+  get 'market/:id', to: 'market#show', as: :market_listing
+
   # API routes for Wiki (AI service)
   post 'wiki/ask', to: 'wiki#ask'
 end

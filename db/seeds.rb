@@ -1,4 +1,8 @@
 # Clear existing data in reverse order of dependencies
+MarketListing.destroy_all if defined?(MarketListing)
+MarketCategory.destroy_all if defined?(MarketCategory)
+LogbookEntry.destroy_all if defined?(LogbookEntry)
+GarageCar.destroy_all if defined?(GarageCar)
 GpsDynoRun.destroy_all
 ChampionshipStanding.destroy_all
 ChampionshipStage.destroy_all
@@ -290,6 +294,72 @@ GpsDynoRun.create!([
     run_date: Date.parse('2026-07-01'),
     chart_data: sample_chart,
     source_file_name: 'Dragy_STI_Pull4th.csv'
+  }
+])
+
+# 7. Marketplace Categories & Listings
+cat_cars = MarketCategory.create!(name: 'Гоночные автомобили (Track-tools)', slug: 'race-cars', position: 1)
+cat_rent = MarketCategory.create!(name: 'Аренда спортивной техники', slug: 'rent-cars', position: 2)
+cat_parts = MarketCategory.create!(name: 'Запчасти и спортивный тюнинг', slug: 'performance-parts', position: 3)
+cat_tires = MarketCategory.create!(name: 'Колеса и шины (слики / полуслики)', slug: 'wheels-and-tires', position: 4)
+cat_safety = MarketCategory.create!(name: 'Экипировка и безопасность FIA', slug: 'safety-and-gear', position: 5)
+cat_logistics = MarketCategory.create!(name: 'Гоночная логистика и прицепы', slug: 'logistics-and-trailers', position: 6)
+
+car_bmw = GarageCar.find_by(make: 'BMW') || GarageCar.first
+
+MarketListing.create!([
+  {
+    market_category: cat_cars,
+    pilot: pilot4,
+    garage_car: car_bmw,
+    deal_type: 'sale',
+    title: 'Porsche 911 GT3 (992) Clubsport Package',
+    description: 'Идеальное состояние. Полный заводской Clubsport пакет: каркас безопасности по приложению FIA, карбоновые ковши, 6-точечные ремни Schroth, система пожаротушения. Обслужена у официального дилера, пробег 12 000 км, 4 трек-дня на Moscow Raceway.',
+    price: 24500000,
+    city: 'Москва',
+    contact_name: 'Михаил Степанов',
+    contact_phone: '+7 (916) 111-22-33',
+    contact_telegram: 'stepanov_gt3',
+    image_url: 'https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    market_category: cat_rent,
+    pilot: pilot1,
+    deal_type: 'rent',
+    title: 'Аренда Audi RS3 LMS TCR "Под ключ" на этап РСКГ / трек-день',
+    description: 'Боевая техника класса TCR с полной технической поддержкой команды инженеров и механиков. В стоимость аренды входит: доставка на автодром, боевой комплект сликов Yokohama, телеметрия с разбором тренером, топливо.',
+    price: 350000,
+    price_period: 'per_trackday',
+    city: 'Moscow Raceway / Игора Драйв',
+    contact_name: 'LUKOIL Racing Customer Service',
+    contact_phone: '+7 (495) 777-88-99',
+    contact_telegram: 'lukoilracing_rent',
+    image_url: 'https://images.unsplash.com/photo-1541348263662-e0c8de4259ba?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    market_category: cat_tires,
+    pilot: pilot3,
+    deal_type: 'sale',
+    title: 'Комплект полусликов Nankang AR-1 265/35 R18 (новый)',
+    description: 'Новый комплект 4 шт, свежий год выпуска. Идеальный компаунд для сухих сессий Time Attack. Хранение в отапливаемом боксе.',
+    price: 98000,
+    city: 'Москва',
+    contact_name: 'Алексей Петров',
+    contact_phone: '+7 (926) 333-44-55',
+    contact_telegram: 'petrov_timeattack',
+    image_url: 'https://images.unsplash.com/photo-1578844251758-2f71da64c96f?auto=format&fit=crop&w=1200&q=80'
+  },
+  {
+    market_category: cat_safety,
+    deal_type: 'want',
+    title: 'Куплю гоночный комбинезон OMP / Sparco омологация 8856-2018 (размер 52)',
+    description: 'Ищу новый или в отличном состоянии комбинезон для участия в сезоне REC. Желательно темные цвета, действующая омологация FIA.',
+    price: 60000,
+    city: 'Санкт-Петербург',
+    contact_name: 'Дмитрий Гончаров',
+    contact_phone: '+7 (981) 555-12-34',
+    contact_telegram: 'goncharov_rec',
+    image_url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=1200&q=80'
   }
 ])
 

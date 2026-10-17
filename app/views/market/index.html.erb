@@ -1,0 +1,142 @@
+<div class="space-y-8">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 border border-slate-800 p-6 rounded-xl relative overflow-hidden">
+    <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div>
+      <div class="flex items-center gap-2 mb-2">
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-600/20 text-red-400 border border-red-600/30">Маркетплейс</span>
+        <span class="text-xs text-slate-400">Техника, аренда, запчасти и экипировка</span>
+      </div>
+      <h1 class="text-3xl font-extrabold text-white tracking-tight">Гоночный Маркетплейс</h1>
+      <p class="text-slate-400 text-sm mt-1 max-w-2xl">
+        Покупка, продажа и аренда спортивных автомобилей для трек-дней и гонок, запчасти, боевой шип, экипировка с омологацией FIA и логистика.
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <%= link_to new_market_listing_path, class: "inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium shadow-lg shadow-red-600/20 transition-all transform hover:-translate-y-0.5" do %>
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Подать объявление
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Filters & Deal Tabs -->
+  <div class="space-y-4">
+    <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-800 pb-4">
+      <div class="flex flex-wrap items-center gap-2">
+        <%= link_to market_path(request.query_parameters.merge(deal_type: nil)), class: "px-4 py-2 rounded-lg text-sm font-semibold transition-colors #{params[:deal_type].blank? ? 'bg-red-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800'}" do %>
+          Все объявления <span class="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-black/30"><%= @deal_counts[:all] %></span>
+        <% end %>
+        <%= link_to market_path(request.query_parameters.merge(deal_type: 'sale')), class: "px-4 py-2 rounded-lg text-sm font-semibold transition-colors #{params[:deal_type] == 'sale' ? 'bg-red-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800'}" do %>
+          Продажа <span class="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-black/30"><%= @deal_counts[:sale] %></span>
+        <% end %>
+        <%= link_to market_path(request.query_parameters.merge(deal_type: 'rent')), class: "px-4 py-2 rounded-lg text-sm font-semibold transition-colors #{params[:deal_type] == 'rent' ? 'bg-amber-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800'}" do %>
+          Аренда на трек-день / гонку <span class="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-black/30"><%= @deal_counts[:rent] %></span>
+        <% end %>
+        <%= link_to market_path(request.query_parameters.merge(deal_type: 'want')), class: "px-4 py-2 rounded-lg text-sm font-semibold transition-colors #{params[:deal_type] == 'want' ? 'bg-blue-600 text-white' : 'bg-slate-900 text-slate-400 hover:text-white hover:bg-slate-800'}" do %>
+          Спрос / Ищут <span class="ml-1 px-1.5 py-0.5 text-xs rounded-full bg-black/30"><%= @deal_counts[:want] %></span>
+        <% end %>
+      </div>
+
+      <!-- Search & City Filter -->
+      <%= form_with url: market_path, method: :get, local: true, class: "flex items-center gap-2" do |f| %>
+        <%= f.hidden_field :deal_type, value: params[:deal_type] if params[:deal_type].present? %>
+        <%= f.hidden_field :category_id, value: params[:category_id] if params[:category_id].present? %>
+        <div class="relative">
+          <%= f.text_field :q, value: params[:q], placeholder: "Поиск по марке, названию...", class: "bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg pl-9 pr-3 py-2 focus:ring-red-500 focus:border-red-500 w-56 sm:w-72" %>
+          <svg class="absolute left-3 top-2.5 text-slate-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <%= f.text_field :city, value: params[:city], placeholder: "Город", class: "bg-slate-900 border border-slate-700 text-slate-200 text-sm rounded-lg px-3 py-2 focus:ring-red-500 focus:border-red-500 w-32 hidden sm:block" %>
+        <%= f.submit "Найти", class: "px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm rounded-lg font-medium cursor-pointer" %>
+      <% end %>
+    </div>
+
+    <!-- Category Pills -->
+    <div class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+      <%= link_to market_path(request.query_parameters.merge(category_id: nil)), class: "whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors #{params[:category_id].blank? ? 'border-red-500 bg-red-500/10 text-red-400' : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700'}" do %>
+        Все категории
+      <% end %>
+      <% @categories.each do |cat| %>
+        <%= link_to market_path(request.query_parameters.merge(category_id: cat.id)), class: "whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors #{params[:category_id].to_s == cat.id.to_s ? 'border-red-500 bg-red-500/10 text-red-400' : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-700'}" do %>
+          <%= cat.name %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Listings Grid -->
+  <% if @listings.any? %>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @listings.each do |listing| %>
+        <%= link_to market_listing_path(listing), class: "group bg-slate-900 border border-slate-800 rounded-xl overflow-hidden hover:border-slate-700 transition-all flex flex-col hover:-translate-y-1" do %>
+          <!-- Image Container -->
+          <div class="relative h-48 bg-slate-950 overflow-hidden">
+            <% if listing.image_url.present? %>
+              <%= image_tag listing.image_url, class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-300", alt: listing.title %>
+            <% else %>
+              <div class="w-full h-full flex items-center justify-center bg-slate-800 text-slate-500">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              </div>
+            <% end %>
+            <!-- Deal Badge -->
+            <div class="absolute top-3 left-3">
+              <% case listing.deal_type %>
+              <% when "sale" %>
+                <span class="px-2.5 py-1 text-xs font-bold rounded bg-red-600 text-white shadow-md">ПРОДАЖА</span>
+              <% when "rent" %>
+                <span class="px-2.5 py-1 text-xs font-bold rounded bg-amber-500 text-black shadow-md">АРЕНДА</span>
+              <% when "want" %>
+                <span class="px-2.5 py-1 text-xs font-bold rounded bg-blue-600 text-white shadow-md">ИЩУТ</span>
+              <% end %>
+            </div>
+            <!-- Category Badge -->
+            <div class="absolute top-3 right-3 bg-slate-900/80 backdrop-blur-sm px-2.5 py-0.5 rounded text-xs font-medium text-slate-300 border border-slate-700/50">
+              <%= listing.market_category.name %>
+            </div>
+            <% if listing.garage_car.present? %>
+              <div class="absolute bottom-3 left-3 bg-emerald-950/90 border border-emerald-500/40 text-emerald-400 text-xs px-2 py-0.5 rounded flex items-center gap-1 backdrop-blur-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                Проверен в Гараже
+              </div>
+            <% end %>
+          </div>
+
+          <!-- Content -->
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-baseline justify-between gap-2 mb-2">
+                <span class="text-xl font-bold text-white group-hover:text-red-500 transition-colors">
+                  <%= listing.formatted_price %>
+                </span>
+                <span class="text-xs text-slate-400 flex items-center gap-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                  <%= listing.city %>
+                </span>
+              </div>
+              <h3 class="font-semibold text-slate-200 line-clamp-1 mb-1">
+                <%= listing.title %>
+              </h3>
+              <p class="text-slate-400 text-xs line-clamp-2 mb-4">
+                <%= listing.description %>
+              </p>
+            </div>
+
+            <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+              <span class="font-medium text-slate-300"><%= listing.contact_name %></span>
+              <span><%= l(listing.created_at.to_date, format: :short) rescue listing.created_at.strftime("%d.%m.%Y") %></span>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="bg-slate-900 border border-slate-800 rounded-xl p-12 text-center max-w-lg mx-auto">
+      <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mx-auto mb-4 text-slate-400">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <h3 class="text-lg font-bold text-white mb-1">Объявления не найдены</h3>
+      <p class="text-slate-400 text-sm mb-6">Попробуйте изменить параметры поиска или сбросить фильтры категорий.</p>
+      <%= link_to "Сбросить все фильтры", market_path, class: "px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-medium" %>
+    </div>
+  <% end %>
+</div>

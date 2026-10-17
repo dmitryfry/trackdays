@@ -1,6 +1,7 @@
 class GarageCar < ApplicationRecord
   belongs_to :pilot, optional: true
   has_many :logbook_entries, dependent: :destroy
+  has_many :market_listings, dependent: :nullify
 
   validates :make, :model, presence: true
 

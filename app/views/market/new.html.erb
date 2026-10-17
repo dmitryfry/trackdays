@@ -1,0 +1,101 @@
+<div class="max-w-3xl mx-auto space-y-6">
+  <div class="flex items-center gap-2 text-sm text-slate-400">
+    <%= link_to "Маркетплейс", market_path, class: "hover:text-white" %>
+    <span>/</span>
+    <span class="text-slate-200">Новое объявление</span>
+  </div>
+
+  <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 sm:p-8">
+    <div class="mb-6">
+      <h1 class="text-2xl font-bold text-white">Размещение объявления</h1>
+      <p class="text-slate-400 text-sm mt-1">Опубликуйте предложение о продаже, аренде или запросе техники и запчастей</p>
+    </div>
+
+    <%= form_with model: @listing, url: market_path, local: true, class: "space-y-6" do |f| %>
+      <% if @listing.errors.any? %>
+        <div class="p-4 bg-red-950/50 border border-red-500/50 rounded-lg text-red-300 text-sm">
+          <ul class="list-disc list-inside space-y-1">
+            <% @listing.errors.full_messages.each do |msg| %>
+              <li><%= msg %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <%= f.label :deal_type, "Тип сделки *", class: "block text-xs font-semibold text-slate-300 uppercase mb-1" %>
+          <%= f.select :deal_type, [["Продажа", "sale"], ["Аренда техники", "rent"], ["Спрос / Ищут", "want"]], {}, class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:ring-red-500 focus:border-red-500" %>
+        </div>
+
+        <div>
+          <%= f.label :market_category_id, "Категория *", class: "block text-xs font-semibold text-slate-300 uppercase mb-1" %>
+          <%= f.collection_select :market_category_id, @categories, :id, :name, {}, class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:ring-red-500 focus:border-red-500" %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :title, "Заголовок объявления *", class: "block text-xs font-semibold text-slate-300 uppercase mb-1" %>
+        <%= f.text_field :title, placeholder: "Например: BMW M3 E46 Track-tool, подготовлена под Turbo Pro", class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:ring-red-500 focus:border-red-500", required: true %>
+      </div>
+
+      <div>
+        <%= f.label :garage_car_id, "Привязать проверенную машину из Гаража (опционально)", class: "block text-xs font-semibold text-slate-300 uppercase mb-1" %>
+        <%= f.collection_select :garage_car_id, @garage_cars, :id, :display_name, { include_blank: "— Без привязки к машине —" }, class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:ring-red-500 focus:border-red-500" %>
+        <p class="text-xs text-slate-400 mt-1">При привязке в карточке объявления отобразится проверенный техпаспорт, вес/мощность и подтвержденные времена с треков.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <%= f.label :price, "Цена (руб.)", class: "block text-xs font-semibold text-slate-300 uppercase mb-1" %>
+          <%= f.number_field :price, placeholder: "0 - по договоренности", class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:ring-red-500 focus:border-red-500" %>
+        </div>
+
+        <div>
+          <%= f.label :price_period, "Период оплаты (для аренды)", class: "block text-xs font-semibold text-slate-300 uppercase mb-1" %>
+          <%= f.select :price_period, [["Фиксированная (разово)", nil], ["За 1 день", "per_day"], ["За трек-день", "per_trackday"], ["За этап чемпионата", "per_stage"]], {}, class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:ring-red-500 focus:border-red-500" %>
+        </div>
+
+        <div>
+          <%= f.label :city, "Город / Локация *", class: "block text-xs font-semibold text-slate-300 uppercase mb-1" %>
+          <%= f.text_field :city, placeholder: "Москва, Moscow Raceway...", class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:ring-red-500 focus:border-red-500", required: true %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :image_url, "URL фотографии / превью", class: "block text-xs font-semibold text-slate-300 uppercase mb-1" %>
+        <%= f.url_field :image_url, placeholder: "https://images.unsplash.com/...", class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:ring-red-500 focus:border-red-500" %>
+      </div>
+
+      <div>
+        <%= f.label :description, "Подробное описание *", class: "block text-xs font-semibold text-slate-300 uppercase mb-1" %>
+        <%= f.text_area :description, rows: 5, placeholder: "Опишите состояние техники, перечень спеков, историю обслуживания или условия аренды (залог, механики, резина)...", class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:ring-red-500 focus:border-red-500", required: true %>
+      </div>
+
+      <div class="border-t border-slate-800 pt-6">
+        <h3 class="text-sm font-bold text-white mb-4">Контакты продавца</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <%= f.label :contact_name, "Ваше имя *", class: "block text-xs font-semibold text-slate-300 uppercase mb-1" %>
+            <%= f.text_field :contact_name, placeholder: "Иван Иванов", class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:ring-red-500 focus:border-red-500", required: true %>
+          </div>
+
+          <div>
+            <%= f.label :contact_phone, "Номер телефона", class: "block text-xs font-semibold text-slate-300 uppercase mb-1" %>
+            <%= f.text_field :contact_phone, placeholder: "+7 (999) 000-00-00", class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:ring-red-500 focus:border-red-500" %>
+          </div>
+
+          <div>
+            <%= f.label :contact_telegram, "Telegram", class: "block text-xs font-semibold text-slate-300 uppercase mb-1" %>
+            <%= f.text_field :contact_telegram, placeholder: "@nickname", class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-200 text-sm focus:ring-red-500 focus:border-red-500" %>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+        <%= link_to "Отмена", market_path, class: "px-4 py-2 text-sm text-slate-400 hover:text-white" %>
+        <%= f.submit "Опубликовать объявление", class: "px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg shadow-lg shadow-red-600/20 cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

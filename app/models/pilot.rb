@@ -4,6 +4,7 @@ class Pilot < ApplicationRecord
   has_many :championship_standings, dependent: :destroy
   has_many :gps_dyno_runs, dependent: :nullify
   has_many :garage_cars, dependent: :nullify
+  has_many :market_listings, dependent: :nullify
 
   validates :name, presence: true
 
