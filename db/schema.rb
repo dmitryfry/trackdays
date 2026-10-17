@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2026_10_17_100000) do
+ActiveRecord::Schema[7.0].define(version: 2026_10_17_110000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -218,6 +218,87 @@ ActiveRecord::Schema[7.0].define(version: 2026_10_17_100000) do
     t.index ["team_id"], name: "index_pilots_on_team_id"
   end
 
+  create_table "sim_bookings", force: :cascade do |t|
+    t.bigint "simulator_slot_id", null: false
+    t.bigint "pilot_id"
+    t.string "customer_name", null: false
+    t.string "customer_phone", null: false
+    t.string "customer_email"
+    t.date "booking_date", null: false
+    t.string "time_slot", null: false
+    t.integer "duration_hours", default: 1, null: false
+    t.boolean "with_instructor", default: false, null: false
+    t.integer "total_price_rub", null: false
+    t.string "status", default: "confirmed", null: false
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["booking_date", "time_slot"], name: "index_sim_bookings_on_booking_date_and_time_slot"
+    t.index ["pilot_id"], name: "index_sim_bookings_on_pilot_id"
+    t.index ["simulator_slot_id"], name: "index_sim_bookings_on_simulator_slot_id"
+  end
+
+  create_table "sim_lap_records", force: :cascade do |t|
+    t.bigint "pilot_id"
+    t.bigint "track_id"
+    t.string "driver_name", null: false
+    t.string "car_name", null: false
+    t.string "sim_game", default: "Assetto Corsa", null: false
+    t.decimal "lap_time", precision: 7, scale: 3, null: false
+    t.decimal "sector_1", precision: 6, scale: 3
+    t.decimal "sector_2", precision: 6, scale: 3
+    t.decimal "sector_3", precision: 6, scale: 3
+    t.string "tire_compound"
+    t.date "record_date", null: false
+    t.string "replay_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["lap_time"], name: "index_sim_lap_records_on_lap_time"
+    t.index ["pilot_id"], name: "index_sim_lap_records_on_pilot_id"
+    t.index ["track_id"], name: "index_sim_lap_records_on_track_id"
+  end
+
+  create_table "sim_mods", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "mod_type", default: "track", null: false
+    t.string "author"
+    t.string "version"
+    t.string "download_url", null: false
+    t.string "image_url"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "sim_servers", force: :cascade do |t|
+    t.bigint "track_id"
+    t.string "name", null: false
+    t.string "sim_game", default: "Assetto Corsa", null: false
+    t.string "server_ip", null: false
+    t.integer "http_port", default: 8081, null: false
+    t.integer "tcp_port", default: 9600, null: false
+    t.string "track_name", null: false
+    t.string "track_config"
+    t.integer "capacity", default: 24, null: false
+    t.integer "online_drivers", default: 0, null: false
+    t.string "cars_list"
+    t.string "password"
+    t.string "cm_join_link"
+    t.string "status", default: "online", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["track_id"], name: "index_sim_servers_on_track_id"
+  end
+
+  create_table "simulator_slots", force: :cascade do |t|
+    t.string "name", null: false
+    t.text "specs"
+    t.integer "hourly_rate_rub", default: 1500, null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "teams", force: :cascade do |t|
     t.string "name", null: false
     t.string "slug", null: false
@@ -281,6 +362,11 @@ ActiveRecord::Schema[7.0].define(version: 2026_10_17_100000) do
   add_foreign_key "market_listings", "market_categories"
   add_foreign_key "market_listings", "pilots"
   add_foreign_key "pilots", "teams"
+  add_foreign_key "sim_bookings", "pilots"
+  add_foreign_key "sim_bookings", "simulator_slots"
+  add_foreign_key "sim_lap_records", "pilots"
+  add_foreign_key "sim_lap_records", "tracks"
+  add_foreign_key "sim_servers", "tracks"
   add_foreign_key "timing_sessions", "events"
   add_foreign_key "timing_sessions", "tracks"
 end

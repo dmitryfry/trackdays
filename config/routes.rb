@@ -42,6 +42,15 @@ Rails.application.routes.draw do
   post 'market', to: 'market#create'
   get 'market/:id', to: 'market#show', as: :market_listing
 
+  # Simracing & AC Integration
+  get 'virtual/servers', to: 'simracing#servers', as: :sim_servers
+  get 'virtual/leaderboard', to: 'simracing#leaderboard', as: :sim_leaderboard
+  get 'virtual/mods', to: 'simracing#mods', as: :sim_mods
+
+  # Sim Club Booking
+  get 'booking', to: 'booking#index', as: :booking
+  post 'booking', to: 'booking#create'
+
   # API routes for Wiki (AI service)
   post 'wiki/ask', to: 'wiki#ask'
 end

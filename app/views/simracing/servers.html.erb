@@ -1,0 +1,86 @@
+<div class="space-y-8">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 border border-slate-800 p-6 rounded-xl relative overflow-hidden">
+    <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div>
+      <div class="flex items-center gap-2 mb-2">
+        <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-cyan-600/20 text-cyan-400 border border-cyan-600/30">Assetto Corsa</span>
+        <span class="text-xs text-slate-400">Онлайн тренировочные серверы и гонки</span>
+      </div>
+      <h1 class="text-3xl font-extrabold text-white tracking-tight">Симрейсинг Хаб: Серверы</h1>
+      <p class="text-slate-400 text-sm mt-1 max-w-2xl">
+        Подключайтесь к тренировочным серверам TrackDays в один клик через Content Manager (acmanager://). Российские автодромы и реалистичная физика.
+      </p>
+    </div>
+    <div class="flex items-center gap-3">
+      <%= link_to sim_leaderboard_path, class: "px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium transition-colors" do %>
+        Лидерборд времен
+      <% end %>
+      <%= link_to sim_mods_path, class: "px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-white text-sm font-medium transition-colors" do %>
+        Каталог модов
+      <% end %>
+      <%= link_to booking_path, class: "px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition-colors shadow-lg shadow-red-600/20" do %>
+        Бронь симулятора в клубе
+      <% end %>
+    </div>
+  </div>
+
+  <!-- Servers Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <% @servers.each do |server| %>
+      <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-slate-700 transition-all flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold <%= server.status == 'online' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-amber-950 text-amber-400 border border-amber-800' %>">
+              <span class="w-1.5 h-1.5 rounded-full <%= server.status == 'online' ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500' %>"></span>
+              <%= server.status.upcase %>
+            </span>
+            <span class="text-xs text-slate-400 font-mono"><%= server.server_ip %>:<%= server.tcp_port %></span>
+          </div>
+
+          <h3 class="text-xl font-bold text-white mb-2"><%= server.name %></h3>
+
+          <div class="grid grid-cols-2 gap-3 p-3 bg-slate-950 rounded-lg border border-slate-800/80 mb-4 text-xs">
+            <div>
+              <span class="text-slate-400">Трасса:</span>
+              <div class="font-semibold text-slate-200"><%= server.track_name %></div>
+            </div>
+            <div>
+              <span class="text-slate-400">Онлайн пилотов:</span>
+              <div class="font-semibold text-white flex items-center gap-1.5">
+                <span><%= server.online_drivers %> / <%= server.capacity %></span>
+                <span class="text-slate-400">(<%= server.occupancy_percent %>%)</span>
+              </div>
+            </div>
+            <% if server.track_config.present? %>
+              <div class="col-span-2">
+                <span class="text-slate-400">Конфигурация:</span>
+                <div class="font-semibold text-slate-200"><%= server.track_config %></div>
+              </div>
+            <% end %>
+            <% if server.cars_list.present? %>
+              <div class="col-span-2">
+                <span class="text-slate-400">Автомобили на сервере:</span>
+                <div class="text-slate-300 font-mono text-[11px] truncate"><%= server.cars_list %></div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between gap-3 pt-3 border-t border-slate-800">
+          <div class="text-xs text-slate-400">
+            <% if server.password.present? %>
+              <span class="text-amber-400">Пароль: <%= server.password %></span>
+            <% else %>
+              <span class="text-emerald-400">Открытый вход (без пароля)</span>
+            <% end %>
+          </div>
+          <a href="<%= server.join_url %>" class="inline-flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-lg text-sm font-semibold transition-colors shadow-md shadow-cyan-600/20">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            One-Click Join (CM)
+          </a>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

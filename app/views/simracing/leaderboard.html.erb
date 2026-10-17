@@ -1,0 +1,70 @@
+<div class="space-y-8">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-slate-900 border border-slate-800 p-6 rounded-xl">
+    <div>
+      <div class="flex items-center gap-2 mb-2">
+        <%= link_to "← К серверам", sim_servers_path, class: "text-xs text-cyan-400 hover:underline" %>
+      </div>
+      <h1 class="text-3xl font-extrabold text-white tracking-tight">Лидерборд виртуальных времен (Assetto Corsa)</h1>
+      <p class="text-slate-400 text-sm mt-1">Официальные рекорды кругов виртуального чемпионата и открытых тренировок</p>
+    </div>
+
+    <!-- Filter form -->
+    <%= form_with url: sim_leaderboard_path, method: :get, local: true, class: "flex flex-wrap items-center gap-2" do |f| %>
+      <%= f.collection_select :track_id, @tracks, :id, :name, { include_blank: "Все трассы", selected: params[:track_id] }, class: "bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg px-3 py-2" %>
+      <%= f.text_field :car, value: params[:car], placeholder: "Модель авто...", class: "bg-slate-950 border border-slate-700 text-slate-200 text-sm rounded-lg px-3 py-2 w-40" %>
+      <%= f.submit "Фильтр", class: "px-3 py-2 bg-slate-800 hover:bg-slate-700 text-white text-sm rounded-lg font-medium cursor-pointer" %>
+    <% end %>
+  </div>
+
+  <!-- Leaderboard Table -->
+  <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-xl">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-sm text-slate-300">
+        <thead class="text-xs uppercase bg-slate-950/80 text-slate-400 border-b border-slate-800">
+          <tr>
+            <th scope="col" class="px-6 py-4 font-semibold text-center w-16">Поз.</th>
+            <th scope="col" class="px-6 py-4 font-semibold">Пилот</th>
+            <th scope="col" class="px-6 py-4 font-semibold">Автомобиль</th>
+            <th scope="col" class="px-6 py-4 font-semibold">Автодром</th>
+            <th scope="col" class="px-6 py-4 font-semibold text-right">Время круга</th>
+            <th scope="col" class="px-6 py-4 font-semibold text-center">Шины</th>
+            <th scope="col" class="px-6 py-4 font-semibold text-right">Дата</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800/60">
+          <% @records.each_with_index do |record, idx| %>
+            <tr class="hover:bg-slate-800/40 transition-colors">
+              <td class="px-6 py-4 font-bold text-center">
+                <% case idx %>
+                <% when 0 %>
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-yellow-500/20 text-yellow-400 border border-yellow-500/40">1</span>
+                <% when 1 %>
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-slate-400/20 text-slate-300 border border-slate-400/40">2</span>
+                <% when 2 %>
+                  <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-amber-700/20 text-amber-500 border border-amber-700/40">3</span>
+                <% else %>
+                  <span class="text-slate-400"><%= idx + 1 %></span>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 font-semibold text-white">
+                <% if record.pilot.present? %>
+                  <%= link_to record.driver_name, pilot_path(record.pilot), class: "hover:text-red-400 transition-colors" %>
+                <% else %>
+                  <%= record.driver_name %>
+                <% end %>
+              </td>
+              <td class="px-6 py-4 text-slate-300 font-mono text-xs"><%= record.car_name %></td>
+              <td class="px-6 py-4 text-slate-400"><%= record.track&.name || 'Общий трек' %></td>
+              <td class="px-6 py-4 text-right font-mono font-bold text-cyan-400 text-base"><%= record.formatted_lap_time %></td>
+              <td class="px-6 py-4 text-center">
+                <span class="px-2 py-0.5 text-xs rounded bg-slate-800 text-slate-300 border border-slate-700"><%= record.tire_compound || 'Slick' %></span>
+              </td>
+              <td class="px-6 py-4 text-right text-xs text-slate-500"><%= record.record_date.strftime("%d.%m.%Y") rescue record.record_date %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

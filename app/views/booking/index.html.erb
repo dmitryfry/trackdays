@@ -1,0 +1,162 @@
+<div class="space-y-8 max-w-5xl mx-auto">
+  <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 border border-indigo-900/50 p-6 md:p-8 rounded-2xl shadow-xl relative overflow-hidden">
+    <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+      <div>
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 mb-3">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m10 15 5-3-5-3v6z"/></svg>
+          Симрейсинг Центр & Клуб
+        </span>
+        <h1 class="text-3xl md:text-4xl font-black text-white tracking-tight">Онлайн-бронирование симуляторов</h1>
+        <p class="text-slate-300 text-sm mt-2 max-w-xl">
+          Профессиональные подвижные и статичные кокпиты с прямым приводом (Direct Drive), педалями с тензодатчиком и поддержкой VR / Triple Screen. Одиночные тренировки, телеметрия и занятия с тренером.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-4 bg-slate-900/80 backdrop-blur p-4 rounded-xl border border-indigo-800/40 text-center">
+        <div>
+          <div class="text-2xl font-black text-indigo-400"><%= @slots.count %></div>
+          <div class="text-[11px] text-slate-400 font-medium">Кокпитов в клубе</div>
+        </div>
+        <div class="w-px h-8 bg-slate-800"></div>
+        <div>
+          <div class="text-2xl font-black text-emerald-400">Direct Drive</div>
+          <div class="text-[11px] text-slate-400 font-medium">Simucube & Fanatec</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if notice.present? %>
+    <div class="p-4 bg-emerald-950/80 border border-emerald-800 text-emerald-200 rounded-xl text-sm flex items-center gap-3">
+      <svg class="w-5 h-5 text-emerald-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+      <%= notice %>
+    </div>
+  <% end %>
+
+  <% if @booking&.errors&.any? %>
+    <div class="p-4 bg-rose-950/80 border border-rose-800 text-rose-200 rounded-xl text-sm">
+      <div class="font-bold mb-1">Пожалуйста, исправьте следующие ошибки:</div>
+      <ul class="list-disc pl-5 text-xs space-y-1">
+        <% @booking.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Left: Rig cards -->
+    <div class="lg:col-span-2 space-y-6">
+      <h2 class="text-xl font-bold text-white flex items-center gap-2">
+        <svg class="w-5 h-5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 8 6 4-6 4Z"/></svg>
+        Доступные конфигурации кокпитов
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <% @slots.each do |slot| %>
+          <div class="bg-slate-900 border border-slate-800 hover:border-indigo-500/50 rounded-xl p-5 transition-all flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-start mb-2">
+                <span class="px-2 py-0.5 rounded text-[11px] font-bold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                  Direct Drive Rig
+                </span>
+                <span class="text-xs font-semibold text-emerald-400">
+                  ● Свободен
+                </span>
+              </div>
+              <h3 class="text-lg font-bold text-white mb-1"><%= slot.name %></h3>
+              <p class="text-xs text-slate-400 mb-3"><%= slot.specs %></p>
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-slate-800 flex items-center justify-between">
+              <div>
+                <span class="text-lg font-black text-white"><%= slot.hourly_rate_rub %> ₽</span>
+                <span class="text-xs text-slate-500">/ час</span>
+              </div>
+              <button type="button" onclick="selectSlot('<%= slot.id %>')" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition-colors">
+                Выбрать риг
+              </button>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <!-- Right: Booking Form -->
+    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 h-fit shadow-xl sticky top-6">
+      <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+        <svg class="w-5 h-5 text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Форма бронирования сессии
+      </h2>
+
+      <%= form_with model: @booking, url: booking_path, local: true, class: "space-y-4" do |f| %>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Кокпит / Симулятор</label>
+          <%= f.select :simulator_slot_id, options_from_collection_for_select(@slots, :id, :name, @booking.simulator_slot_id), { prompt: "Выберите конфигурацию" }, id: "simulator_slot_id", class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500", required: true %>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Ваше Имя и Фамилия</label>
+          <%= f.text_field :customer_name, placeholder: "Алексей Смирнов", class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500", required: true %>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Телефон</label>
+            <%= f.telephone_field :customer_phone, placeholder: "+7 (999) 000-00-00", class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500", required: true %>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Email</label>
+            <%= f.email_field :customer_email, placeholder: "alex@example.com", class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500" %>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Дата тренировки</label>
+            <%= f.date_field :booking_date, value: (@booking.booking_date || Date.tomorrow), class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500", required: true %>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Время</label>
+            <%= f.select :time_slot, ["12:00 - 14:00", "14:00 - 16:00", "16:00 - 18:00", "18:00 - 20:00", "20:00 - 22:00"], {}, class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500" %>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1.5">Длительность</label>
+            <%= f.select :duration_hours, [["1 час", 1], ["2 часа", 2], ["3 часа", 3], ["4 часа", 4]], {}, class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500" %>
+          </div>
+        </div>
+
+        <div class="p-3 bg-slate-950 border border-slate-800 rounded-lg flex items-center gap-3">
+          <%= f.check_box :with_instructor, class: "rounded border-slate-700 bg-slate-900 text-indigo-600 focus:ring-0 w-4 h-4 cursor-pointer", id: "instructor_checkbox" %>
+          <label for="instructor_checkbox" class="text-xs text-slate-300 cursor-pointer">
+            <span class="font-bold text-white block">Работа с гоночным инструктором</span>
+            Разбор телеметрии MoTeC, траекторий и торможений (+1 000 ₽/час)
+          </label>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1.5">Комментарий или предпочтительный автодром</label>
+          <%= f.text_area :notes, rows: 2, placeholder: "Например: хочу потренировать Moscow Raceway перед 2 этапом RHHCC", class: "w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500" %>
+        </div>
+
+        <%= f.submit "Подтвердить бронирование", class: "w-full py-3 bg-gradient-to-r from-indigo-600 to-cyan-600 hover:from-indigo-500 hover:to-cyan-500 text-white font-bold text-sm rounded-xl shadow-lg transition-all cursor-pointer" %>
+        <p class="text-[11px] text-slate-500 text-center">Оплата происходит на стойке клуба при подтверждении или онлайн переводом.</p>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+  function selectSlot(id) {
+    const select = document.getElementById('simulator_slot_id');
+    if (select) {
+      select.value = id;
+      select.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      select.classList.add('ring-2', 'ring-indigo-500');
+      setTimeout(() => select.classList.remove('ring-2', 'ring-indigo-500'), 1500);
+    }
+  }
+</script>
